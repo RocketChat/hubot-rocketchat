@@ -2,7 +2,7 @@ Asteroid = require 'asteroid'
 
 # TODO:   need to grab these values from process.env[]
 
-_msgsubtopic = 'dashboardRoom'
+_msgsubtopic = 'messages'
 _msgsublimit = 10   # this is not actually used right now
 _messageCollection = 'data.ChatMessage'
 
@@ -13,15 +13,16 @@ class RocketchatDriver
   constructor: (url, @logger) ->
     @asteroid = new Asteroid(url)
 
-  joinRoom: (userid, roomid) =>
+  joinRoom: (userid, uname, roomid) =>
     @logger.info "joined room"
-    @asteroid.call('addUserToRoom', {uid:userid, rid:roomid})
+    @asteroid.call('addUserToRoom', {uid:userid, username:uname, rid:roomid})
 
   sendMessage: (text, roomid) =>
     @logger.info "send message"
     @asteroid.call('sendMessage', {message: text, rid: roomid})
 
   login: (username, password) =>
+    @logger.info "login"
     # promise returned
     return @asteroid.loginWithPassword username, password
 
@@ -31,13 +32,12 @@ class RocketchatDriver
     #    data.roomid
     # return promise
     @logger.info "prepare meteor subscriptions"
-    @joinRoom data.uid, data.roomid
     msgsub = @asteroid.subscribe _msgsubtopic, data.roomid, _msgsublimit
     return msgsub.ready
 
   setupReactiveMessageList: (receiveMessageCallback) =>
     @logger.info "setup reactive message list"
-    @messages = @asteroid.getCollection "data.ChatMessage"
+    @messages = @asteroid.getCollection _messageCollection  
     rQ = @messages.reactiveQuery {}
     rQ.on "change", (id) =>
       # awkward syntax due to asteroid limitations

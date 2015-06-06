@@ -1,10 +1,10 @@
-{Adapter, TextMessage} = require "../../hubot2/node_modules/hubot"
+{Adapter, TextMessage} = require "../../hubot"
 Chatdriver = require './rocketchat_driver'
 
 # TODO:   need to grab these values from process.env[]
 #
-_meteorurl = "localhost:3000"
-_hubotuser = "hubot@hubot.com"
+_meteorurl = "192.168.88.107:3000"
+_hubotuser = "hubot"
 _hubotpassword = "abc123"
 
 
@@ -14,7 +14,7 @@ _hubotpassword = "abc123"
 #        don't be too opinioned as it will prevent certain
 #        yet-to-be-imagined usecases
 
-_roomid = "TZCibR4JM3btXjJHg"
+_roomid = "thhPNzZhi2MHd23pZ"
 
 
 # Generic hubot adapter for chat subsystems based on Meteor
@@ -39,16 +39,16 @@ class MeteorChatBotAdapter extends Adapter
     @chatdriver.login _hubotuser, _hubotpassword
     .then (userid) =>
       @robot.logger.info "logged in"
-      @chatdriver.joinRoom userid, _roomid
+      @chatdriver.joinRoom userid, _hubotuser, _roomid
       @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: _roomid})
       .then (arg) =>
         @robot.logger.info "subscription ready"
 
         @chatdriver.setupReactiveMessageList (newmsg) =>
-          @robot.logger.info "message receive callback"
+          @robot.logger.info "message receive callback" 
           user = @robot.brain.userForId 1, name: 'Shell', room: newmsg.rid
           text = new TextMessage(user, newmsg.msg, newmsg._id)
-          @receive text
+          @robot.receive text
     @emit 'connected'
 
 exports.use = (robot) ->
