@@ -46,7 +46,8 @@ class MeteorChatBotAdapter extends Adapter
 
         @chatdriver.setupReactiveMessageList (newmsg) =>
           @robot.logger.info "message receive callback" 
-          user = @robot.brain.userForId 1, name: 'Shell', room: newmsg.rid
+          # use RocketChat schema for user for now
+          user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
           text = new TextMessage(user, newmsg.msg, newmsg._id)
           @robot.receive text
     @emit 'connected'
