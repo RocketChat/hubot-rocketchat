@@ -68,8 +68,11 @@ _hubotuser | the bot user's name
 _hubotpassword | the bot user's password
 _roomid | the channel that the bot should join, take a look at the end of your URL while inside a room to get the id
 
-We are continually enhancing this hubot to Rocket.Chat adapter, any bot you write should remain compatible as we add capabilities to the adapter
-If you find a bug or compatibility problem, please submit an issue.  If you have any enhancements or feature requests, submit an issue.  If you like what you see, please star the repo.
+We are continually enhancing this adapter, any bot you write should remain compatible as we add capabilities.
+
+If you find a bug or compatibility problem, please open an issue.  
+
+If you have any enhancements or feature requests, create an issue.  If you like what you see, please star the repo.
 
 Finally, if you have created a bot that other users may find useful, please contribute it.
 
@@ -85,7 +88,7 @@ While it is functional, the current adapter is very basic.  We need all the help
 
 Become part of the project, just pick an issue and file a PR.
 
-The adapter code is under the `src` directory.   To test changed adapter code, just simply stop the container and run it again.
+The adapter code is under the `src` directory.   To test modified adapter code, exit (ctrl-c) the container and run it again.
 
 
 ### FAQ
@@ -106,11 +109,11 @@ Another use-case is a load test bot, imagine a bot that accepts the command:
 ````
 rocketbot loadtest europe 25, asia 50, usa 100, canada 10
 ````
-This command specifies a distribution of test bot instances across globally located data centers.  
+This command specifies a distribution of test bot instances, to be created across globally located data centers.  
 
 Once received, the bot:
 * parses the distribution
-* concurrently ssh to remote kubernetes controllers and spwans the specified number of test bot instances to start the load test
+* concurrently ssh to remote Kubernetes controllers and spawns the specified number of test bot instances to start the load test
 
 Q:   The architecture of hubot-rocketchat looks interesting, can you tell me more about it?
 
@@ -119,27 +122,9 @@ A:  Sure, it is based on hubot-meteorchat.  hubot-meteorchat is the hubot integr
 Learn more about hubot-meteorchat and other available drivers [at this link](https://github.com/Sing-Li/hubot-meteorchat).
 
 
-
 #### If for some reasons, you can not run docker.  Following are some old notes to help you get up and running.
 
-##### Setting up Rocket.Chat for hubot-rocketchat adapter development
-
-Note the current implementation is far from complete.  This working adapter allows contributors to start hacking asap.
-
-
 ##### Manual configuration 
-
-On your Rocket.Chat server, create a new user named hubot, and set password to hubot - choose your own avatar.  (you can change the username or password in the src/meteorchat.coffee file)
-
-Logon as another user, create a new channel and add hubot as a user.  While in that channel, look at your browser's URL - note the random alpha at the end, that is the room-id of the channel.  Cut the roomid and paste it into _roomid of src/meteorchat.coffee.
-
-##### Install hubot and link adapter
-
-In this hubot-rocketchat  directory:
-
-```
-npm install
-```
 
 Instantiate a hubot instance using yeoman by following [these instructions](https://hubot.github.com/docs/)
 
