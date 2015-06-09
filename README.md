@@ -1,8 +1,8 @@
 # hubot-rocketchat
 
-Good news!  Rocket.Chat is ready for your bots *NOW*!  
+Run your bots on Rocket.Chat!  
 
-Docker containers make (the usually complicated) setup a breeze.  Follow the quick start guide below to launch your bot.
+Follow the quick start guide below to launch your bot.
 
 ### Quickstart guide for bot writers
 
@@ -48,6 +48,9 @@ The example bot under `scripts` directory respeonds to:
 rocketbot report status
 ```
 
+Here is a sample run:
+
+![picture of a sample interaction with rocketbot](https://raw.githubusercontent.com/Sing-Li/bbug/master/images/botpic.png)
 
 #### Additional details
 Look under the `scripts` directory, you will find a very basic bot there.   
@@ -66,7 +69,7 @@ Variable | Description
 _meteorurl | the IP and port where Rocket.Chat is running
 _hubotuser | the bot user's name
 _hubotpassword | the bot user's password
-_roomid | the channel that the bot should join, take a look at the end of your URL while inside a room to get the id
+_roomid | the channel that the bot should join, take a look at the end of your URL while inside a channel to get the id
 
 We are continually enhancing this adapter, any bot you write should remain compatible as we add capabilities.
 
