@@ -19,7 +19,7 @@ class RocketchatDriver
 
   sendMessage: (text, roomid) =>
     @logger.info "send message"
-    @asteroid.call('sendMessage', {message: text, rid: roomid})
+    @asteroid.call('sendMessage', {msg: text, rid: roomid})
 
   login: (username, password) =>
     @logger.info "login"
