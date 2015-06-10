@@ -9,7 +9,7 @@ _messageCollection = 'data.ChatMessage'
 # driver specific to Rocketchat hubot integration
 # plugs into generic rocketchatbotadapter
 
-class RocketchatDriver
+class RocketChatDriver
   constructor: (url, @logger) ->
     @asteroid = new Asteroid(url)
 
@@ -49,5 +49,5 @@ class RocketchatDriver
         if changedMsg and changedMsg.msg
           receiveMessageCallback  changedMsg
 
-module.exports = RocketchatDriver
+module.exports = RocketChatDriver
 

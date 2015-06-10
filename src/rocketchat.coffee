@@ -1,56 +1,48 @@
-{Adapter, TextMessage} = require "../../hubot"
-Chatdriver = require './rocketchat_driver'
-
-# TODO:   need to grab these values from process.env[]
-#
-_meteorurl = "192.168.88.107:3000"
-_hubotuser = "hubot"
-_hubotpassword = "abc123"
-
-
-# TODO:  how to parameterize room(s) will depend on the
-#        operating mode and policies
-#
-#        don't be too opinioned as it will prevent certain
-#        yet-to-be-imagined usecases
-
-_roomid = "thhPNzZhi2MHd23pZ"
-
-
-# Generic hubot adapter for chat subsystems based on Meteor
-#
-# support for :  rocketchat, spacetalk, nullchat planned
-# more to follow possibly
-#
+{Robot, Adapter, TextMessage} = require 'hubot'
+RocketChatDriver = require './rocketchat_driver'
 
 class RocketChatBotAdapter extends Adapter
+
+  @MAX_MESSAGE_LENGTH: 4000
+  @MIN_MESSAGE_LENGTH: 1
+
+  constructor: (robot) ->
+    @robot = robot
+
+  run: =>
+
+    @RocketChatURL = process.env.ROCKETCHAT_URL or "localhost:3000"
+    @RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
+    @RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "abc123"
+    @RocketChatRoom = process.env.ROCKETCHAT_ROOM or "57om6EQCcFami9wuT"
+
+    return @robot.logger.error "No services URL provided to Hubot" unless @RocketChatURL
+    return @robot.logger.error "No services User provided to Hubot" unless @RocketChatUser
+    return @robot.logger.error "No services Password provided to Hubot" unless @RocketChatPassword
+
+    @robot.logger.info "RocketChatBot Running"
+
+    @chatdriver = new RocketChatDriver @RocketChatURL, @robot.logger
+    @chatdriver.login(@RocketChatUser, @RocketChatPassword).then (userid) =>
+      @robot.logger.info "RocketChatBot Logged-in"
+      @chatdriver.joinRoom userid, @RocketChatUser, @RocketChatRoom
+      @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: @RocketChatRoom}).then (arg) =>
+        @robot.logger.info "RocketChatBot Subscription Ready"
+        @chatdriver.setupReactiveMessageList (message) =>
+          @robot.logger.info "RocketChatBot Message Receive Callback"
+          user = @robot.brain.userForId message.u._id, name: message.u.username, room: message.rid
+          text = new TextMessage(user, message.msg, message._id)
+          @robot.receive(text)
+    @emit 'connected'
+
   send: (envelope, strings...) =>
     @robot.logger.info "send msg"
-    @chatdriver.sendMessage(str, envelope.room)  for str in strings
+    @chatdriver.sendMessage(str, envelope.room) for str in strings
 
   reply: (envelope, strings...) =>
     @robot.logger.info "reply"
-    strings = strings.map (s) -> "#{envelope.user.name}: #{s}"
+    strings = strings.map (s) -> "@#{envelope.user.name}: #{s}"
     @send envelope, strings...
-
-  run: =>
-    @robot.logger.info "running rocketchat"
-    @chatdriver = new Chatdriver _meteorurl, @robot.logger
-    @chatdriver.login _hubotuser, _hubotpassword
-    .then (userid) =>
-      @robot.logger.info "logged in"
-      @chatdriver.joinRoom userid, _hubotuser, _roomid
-      @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: _roomid})
-      .then (arg) =>
-        @robot.logger.info "subscription ready"
-
-        @chatdriver.setupReactiveMessageList (newmsg) =>
-          @robot.logger.info "message receive callback"
-          # use RocketChat schema for user for now
-          user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-          text = new TextMessage(user, newmsg.msg, newmsg._id)
-          @robot.receive text
-    @emit 'connected'
 
 exports.use = (robot) ->
   new RocketChatBotAdapter robot
