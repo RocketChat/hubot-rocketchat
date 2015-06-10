@@ -47,7 +47,7 @@ class RocketChatDriver
       if changedMsgQuery.result
         changedMsg = changedMsgQuery.result[0]
         if changedMsg and changedMsg.msg
-          receiveMessageCallback  changedMsg
+          receiveMessageCallback changedMsg
 
 module.exports = RocketChatDriver
 
