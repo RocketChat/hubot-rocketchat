@@ -62,14 +62,16 @@ Obviously, you also need:
 * a user in Rocket.Chat that the bot will run under
 * a room including the bot user as a member
 
-Edit the src/meteorchat.coffee file to set:
+Edit the src/rocketchat.coffee file to set:
 
 Variable | Description
 :---- | :----
-_meteorurl | the IP and port where Rocket.Chat is running
-_hubotuser | the bot user's name
-_hubotpassword | the bot user's password
-_roomid | the channel that the bot should join, take a look at the end of your URL while inside a channel to get the id
+RocketChatURL | the IP and port where Rocket.Chat is running
+RocketChatUser | the bot user's name
+RocketChatPassword | the bot user's password
+RocketChatRoom | the channel that the bot should join, take a look at the end of your URL while inside a channel to get the id
+
+Alternatively, you can use -e "<env var name>=<env var value>"  to set the corresponding environment variable when you run the docker container.
 
 We are continually enhancing this adapter, any bot you write should remain compatible as we add capabilities.
 
@@ -125,20 +127,11 @@ A:  Sure, it is based on hubot-meteorchat.  hubot-meteorchat is the hubot integr
 Learn more about hubot-meteorchat and other available drivers [at this link](https://github.com/Sing-Li/hubot-meteorchat).
 
 
-#### If for some reasons, you can not run docker.  Following are some old notes to help you get up and running.
+#### If for some reasons, you can not run docker.  You can still perform bot development or launch a bot using the *classic* hubot method based on npm.
 
-##### Manual configuration 
-
-Instantiate a hubot instance using yeoman by following [these instructions](https://hubot.github.com/docs/)
+Just follow the [very detailed instructions here](https://hubot.github.com/docs/).   Our npm module name is `hubot-rocketchat` and you need to start your hubot instance specifying the adapter name via `-a`: 
 
 
-Configure the adapter development environment by following [these instructions](https://hubot.github.com/docs/adapters/development/).  Link it, but don't run the bot just yet.
-
-Now check the relative path in the first line in src/meteorchat.coffee and make sure you are pointing to the source directory of hubot.
-
-Make sure you have a REDIS instance running locally. See [these instructions](http://redis.io/topics/quickstart)
-
-Finally, run your bot:
 ```
 hubot -a rocketchat 
 
