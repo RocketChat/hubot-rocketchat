@@ -1,10 +1,47 @@
 {
   "name": "hubot-rocketchat",
-  "version": "0.0.1",
-  "private": true,
-  "author": "Sing Li <sli@makawave.com>",
-  "description": "Hubot-Rocketchat Adapter",
-  "main": "./src/meteorchat",
+  "version": "0.0.4",
+  "author": {
+    "name": "Rocket.Chat",
+    "url": "http://rocket.chat/"
+  },
+  "contributors": [
+    {
+      "name": "Sing Li",
+      "email": "sli@makawave.com"
+    },
+    {
+      "name": "Gabriel Engel",
+      "email": "gabriel.engel@gmail.com"
+    }
+  ],
+  "description": "Hubot Rocket.Chat Adapter",
+  "keywords": [
+    "hubot",
+    "adapter",
+    "rocketchat",
+    "rocket",
+    "chat"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RocketChat/hubot-rocketchat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RocketChat/hubot-rocketchat/issues",
+    "email": "support@rocket.chat"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.7.1",
+    "hubot": "~2.11"
+  },
+  "main": "./src/rocketchat",
   "dependencies": {
     "asteroid": "^0.6.1"
   }

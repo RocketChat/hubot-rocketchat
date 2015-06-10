@@ -7,9 +7,9 @@ _msgsublimit = 10   # this is not actually used right now
 _messageCollection = 'data.ChatMessage'
 
 # driver specific to Rocketchat hubot integration
-# plugs into generic meteorchatbotadapter
+# plugs into generic rocketchatbotadapter
 
-class RocketchatDriver
+class RocketChatDriver
   constructor: (url, @logger) ->
     @asteroid = new Asteroid(url)
 
@@ -37,7 +37,7 @@ class RocketchatDriver
 
   setupReactiveMessageList: (receiveMessageCallback) =>
     @logger.info "setup reactive message list"
-    @messages = @asteroid.getCollection _messageCollection  
+    @messages = @asteroid.getCollection _messageCollection
     rQ = @messages.reactiveQuery {}
     rQ.on "change", (id) =>
       # awkward syntax due to asteroid limitations
@@ -47,7 +47,7 @@ class RocketchatDriver
       if changedMsgQuery.result
         changedMsg = changedMsgQuery.result[0]
         if changedMsg and changedMsg.msg
-          receiveMessageCallback  changedMsg
+          receiveMessageCallback changedMsg
 
-module.exports = RocketchatDriver
+module.exports = RocketChatDriver
 
