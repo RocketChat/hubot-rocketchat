@@ -23,7 +23,7 @@ _roomid = "thhPNzZhi2MHd23pZ"
 # more to follow possibly
 #
 
-class MeteorChatBotAdapter extends Adapter
+class RocketChatBotAdapter extends Adapter
   send: (envelope, strings...) =>
     @robot.logger.info "send msg"
     @chatdriver.sendMessage(str, envelope.room)  for str in strings
@@ -45,7 +45,7 @@ class MeteorChatBotAdapter extends Adapter
         @robot.logger.info "subscription ready"
 
         @chatdriver.setupReactiveMessageList (newmsg) =>
-          @robot.logger.info "message receive callback" 
+          @robot.logger.info "message receive callback"
           # use RocketChat schema for user for now
           user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
           text = new TextMessage(user, newmsg.msg, newmsg._id)
@@ -53,4 +53,4 @@ class MeteorChatBotAdapter extends Adapter
     @emit 'connected'
 
 exports.use = (robot) ->
-  new MeteorChatBotAdapter robot
+  new RocketChatBotAdapter robot
