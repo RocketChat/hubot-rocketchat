@@ -71,7 +71,7 @@ RocketChatUser | the bot user's name
 RocketChatPassword | the bot user's password
 RocketChatRoom | the channel that the bot should join, take a look at the end of your URL while inside a channel to get the id
 
-Alternatively, you can use -e "<env var name>=<env var value>"  to set the corresponding environment variable when you run the docker container.
+Alternatively, you can use -e "\<environment var name\> = \<value\>"  to set the corresponding environment variable when you run the docker container.
 
 We are continually enhancing this adapter, any bot you write should remain compatible as we add capabilities.
 
