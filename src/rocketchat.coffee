@@ -1,10 +1,10 @@
 {Adapter, TextMessage} = require "../../hubot"
 Chatdriver = require './rocketchat_driver'
 
-RocketChatURL = process.env.ROCKETCHAT_URL or "localhost:3000"
-RocketChatRoom = process.env.ROCKETCHAT_ROOM or "57om6EQCcFami9wuT"
+RocketChatURL = process.env.ROCKETCHAT_URL or "192.168.88.107:3000"
+RocketChatRoom = process.env.ROCKETCHAT_ROOM or "thhPNzZhi2MHd23pZ"
 RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
-RocketChatPassword = process.env.ROCKETCHAT_PASSWORD
+RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "abc123"
 
 class RocketChatBotAdapter extends Adapter
 
@@ -16,6 +16,7 @@ class RocketChatBotAdapter extends Adapter
     return @robot.logger.error "No services ROCKETCHAT_PASSWORD provided to Hubot" unless RocketChatPassword
 
     @robot.logger.info "running rocketchat"
+    @lastts = new Date()
     @chatdriver = new Chatdriver RocketChatURL, @robot.logger
     @chatdriver.login(RocketChatUser, RocketChatPassword).then (userid) =>
       @robot.logger.info "logged in"
@@ -24,10 +25,14 @@ class RocketChatBotAdapter extends Adapter
         @robot.logger.info "subscription ready"
         @chatdriver.setupReactiveMessageList (newmsg) =>
           if newmsg.u._id isnt userid
-            @robot.logger.info "message receive callback"
-            user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-            text = new TextMessage(user, newmsg.msg, newmsg._id)
-            @robot.receive text
+              curts = new Date(newmsg.ts.$date)
+              @robot.logger.info "message receive callback id " + newmsg._id + " ts " + curts
+              @robot.logger.info " text is " + newmsg.msg
+              if curts > @lastts
+                @lastts = curts 
+                user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+                text = new TextMessage(user, newmsg.msg, newmsg._id)
+                @robot.receive text
     @emit 'connected'
 
   send: (envelope, strings...) =>

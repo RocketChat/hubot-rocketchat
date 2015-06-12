@@ -42,11 +42,11 @@ class RocketChatDriver
     rQ.on "change", (id) =>
       # awkward syntax due to asteroid limitations
       # - it ain't no minimongo cursor
-      @logger.info "change received"
+      @logger.info "change received on ID " + id
       changedMsgQuery = @messages.reactiveQuery {"_id": id}
       if changedMsgQuery.result
         changedMsg = changedMsgQuery.result[0]
-        if changedMsg and changedMsg.msg
+        if changedMsg and changedMsg.msg and changedMsg.msg != "..."
           receiveMessageCallback changedMsg
 
 module.exports = RocketChatDriver
