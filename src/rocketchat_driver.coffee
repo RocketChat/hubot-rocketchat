@@ -4,7 +4,7 @@ Asteroid = require 'asteroid'
 
 _msgsubtopic = 'messages'
 _msgsublimit = 10   # this is not actually used right now
-_messageCollection = 'data.ChatMessage'
+_messageCollection = 'rocketchat_message'
 
 # driver specific to Rocketchat hubot integration
 # plugs into generic rocketchatbotadapter
