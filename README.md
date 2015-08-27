@@ -64,12 +64,12 @@ Obviously, you also need:
 
 Edit the src/rocketchat.coffee file to set:
 
-Variable | Description
-:---- | :----
-RocketChatURL | the IP and port where Rocket.Chat is running
-RocketChatUser | the bot user's name
-RocketChatPassword | the bot user's password
-RocketChatRoom | the channel that the bot should join, take a look at the end of your URL while inside a channel to get the id
+Variable | Environment Variable | Description
+:---- | :---- | :----
+RocketChatURL | ROCKETCHAT_URL | the IP and port where Rocket.Chat is running
+RocketChatUser | ROCKETCHAT_USER | the bot user's name
+RocketChatPassword | ROCKETCHAT_PASSWORD | the bot user's password
+RocketChatRoom | ROCKETCHAT_ROOM | the channel that the bot should join, take a look at the end of your URL while inside a channel to get the id
 
 Alternatively, you can use -e "\<environment var name\> = \<value\>"  to set the corresponding environment variable when you run the docker container.
 
