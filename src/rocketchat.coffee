@@ -5,8 +5,8 @@ catch
   {Robot,Adapter,TextMessage,User} = prequire 'hubot'
 Chatdriver = require './rocketchat_driver'
 
-RocketChatURL = process.env.ROCKETCHAT_URL or "rocketchat.vm:80"
-RocketChatRoom = process.env.ROCKETCHAT_ROOM or "u6rMNkRMwzxW7AuGu,GENERAL"
+RocketChatURL = process.env.ROCKETCHAT_URL or "localhost:3000"
+RocketChatRoom = process.env.ROCKETCHAT_ROOM or "insertyourownroomid,GENERAL"
 RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
 RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
 
