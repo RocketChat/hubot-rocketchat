@@ -1,10 +1,14 @@
-{Adapter, TextMessage} = require "../../hubot"
+try
+  {Robot,Adapter,TextMessage,User} = require 'hubot'
+catch
+  prequire = require('parent-require')
+  {Robot,Adapter,TextMessage,User} = prequire 'hubot'
 Chatdriver = require './rocketchat_driver'
 
-RocketChatURL = process.env.ROCKETCHAT_URL or "192.168.88.107:3000"
-RocketChatRoom = process.env.ROCKETCHAT_ROOM or "thhPNzZhi2MHd23pZ"
+RocketChatURL = process.env.ROCKETCHAT_URL or "rocketchat.vm:80"
+RocketChatRoom = process.env.ROCKETCHAT_ROOM or "u6rMNkRMwzxW7AuGu,GENERAL"
 RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
-RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "abc123"
+RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
 
 class RocketChatBotAdapter extends Adapter
 
@@ -18,21 +22,25 @@ class RocketChatBotAdapter extends Adapter
     @robot.logger.info "running rocketchat"
     @lastts = new Date()
     @chatdriver = new Chatdriver RocketChatURL, @robot.logger
+    rooms = RocketChatRoom.split(',')
+    @robot.logger.info "first room #{rooms[0]}"
     @chatdriver.login(RocketChatUser, RocketChatPassword).then (userid) =>
       @robot.logger.info "logged in"
-      @chatdriver.joinRoom userid, RocketChatUser, RocketChatRoom
-      @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: RocketChatRoom}).then (arg) =>
-        @robot.logger.info "subscription ready"
-        @chatdriver.setupReactiveMessageList (newmsg) =>
-          if newmsg.u._id isnt userid
-              curts = new Date(newmsg.ts.$date)
-              @robot.logger.info "message receive callback id " + newmsg._id + " ts " + curts
-              @robot.logger.info " text is " + newmsg.msg
-              if curts > @lastts
-                @lastts = curts 
-                user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-                text = new TextMessage(user, newmsg.msg, newmsg._id)
-                @robot.receive text
+      for room in rooms
+        do(room) =>
+          @chatdriver.joinRoom userid, RocketChatUser, room
+          @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: room}).then (arg) =>
+            @robot.logger.info "subscription ready"
+            @chatdriver.setupReactiveMessageList (newmsg) =>
+              if newmsg.u._id isnt userid
+                  curts = new Date(newmsg.ts.$date)
+                  @robot.logger.info "message receive callback id " + newmsg._id + " ts " + curts
+                  @robot.logger.info " text is " + newmsg.msg
+                  if curts > @lastts
+                    @lastts = curts
+                    user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+                    text = new TextMessage(user, newmsg.msg, newmsg._id)
+                    @robot.receive text
     @emit 'connected'
 
   send: (envelope, strings...) =>

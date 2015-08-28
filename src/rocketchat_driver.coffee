@@ -33,6 +33,7 @@ class RocketChatDriver
     # return promise
     @logger.info "prepare meteor subscriptions"
     msgsub = @asteroid.subscribe _msgsubtopic, data.roomid, _msgsublimit
+    @logger.info "data.roomid == #{data.roomid}"
     return msgsub.ready
 
   setupReactiveMessageList: (receiveMessageCallback) =>
@@ -50,4 +51,3 @@ class RocketChatDriver
           receiveMessageCallback changedMsg
 
 module.exports = RocketChatDriver
-

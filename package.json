@@ -38,11 +38,11 @@
     "email": "support@rocket.chat"
   },
   "devDependencies": {
-    "coffee-script": "~1.7.1",
-    "hubot": "~2.11"
+    "coffee-script": "~1.7.1"
   },
   "main": "./src/rocketchat",
   "dependencies": {
-    "asteroid": "^0.6.1"
+    "asteroid": "^0.6.1",
+    "parent-require": "^1.0.0"
   }
 }
