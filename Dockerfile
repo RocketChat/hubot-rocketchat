@@ -23,6 +23,3 @@ CMD node -e "console.log(JSON.stringify('$EXTERNAL_SCRIPTS'.split(',')))" > exte
  npm install $(node -e "console.log('$EXTERNAL_SCRIPTS'.split(',').join(' '))") && \
  if $DEV; then coffee -c /home/hubot/node_modules/hubot-rocketchat/src/*.coffee; fi && \
  bin/hubot -n $BOT_NAME -a rocketchat
-
-#CMD coffee -c /home/hubot/node_modules/hubot-rocketchat/src/*.coffee && \
-#bin/hubot -n $BOT_NAME -a rocketchat
