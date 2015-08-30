@@ -33,14 +33,14 @@ class RocketChatBotAdapter extends Adapter
             @robot.logger.info "subscription ready"
             @chatdriver.setupReactiveMessageList (newmsg) =>
               if newmsg.u._id isnt userid
-                  curts = new Date(newmsg.ts.$date)
-                  @robot.logger.info "message receive callback id " + newmsg._id + " ts " + curts
-                  @robot.logger.info " text is " + newmsg.msg
-                  if curts > @lastts
-                    @lastts = curts
-                    user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-                    text = new TextMessage(user, newmsg.msg, newmsg._id)
-                    @robot.receive text
+                curts = new Date(newmsg.ts.$date)
+                @robot.logger.info "message receive callback id " + newmsg._id + " ts " + curts
+                @robot.logger.info " text is " + newmsg.msg
+                if curts > @lastts
+                  @lastts = curts
+                  user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+                  text = new TextMessage(user, newmsg.msg, newmsg._id)
+                  @robot.receive text
     @emit 'connected'
 
   send: (envelope, strings...) =>
