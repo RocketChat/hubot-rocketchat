@@ -1,14 +1,22 @@
+![Rocket.Chat logo](https://rocket.chat/images/logo/logo-dark.svg?v3)
+
 # hubot-rocketchat
 
-Run your bots on Rocket.Chat!  
+Run your bots on Rocket.Chat!
 
-Follow the quick start guide below to launch your bot.
+## About
+
+[![Test Coverage](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/coverage.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat/coverage)
+[![Code Climate](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/gpa.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/RocketChat/Rocket.Chat/raw/master/LICENSE)
 
 ### Quickstart guide for bot writers
 
+Follow the quick start guide below to launch your bot.
+
 You will need:
 
-* node.js 
+* node.js
 * git
 * docker
 
@@ -53,7 +61,7 @@ Here is a sample run:
 ![picture of a sample interaction with rocketbot](https://raw.githubusercontent.com/Sing-Li/bbug/master/images/botpic.png)
 
 #### Additional details
-Look under the `scripts` directory, you will find a very basic bot there.   
+Look under the `scripts` directory, you will find a very basic bot there.
 
 Just add your own bot in the directory to have it loaded.  If you are new to bot writing, [this single page](https://hubot.github.com/docs/scripting/) contains everything you need to know.
 
@@ -75,7 +83,7 @@ Alternatively, you can use -e "\<environment var name\> = \<value\>"  to set the
 
 We are continually enhancing this adapter, any bot you write should remain compatible as we add capabilities.
 
-If you find a bug or compatibility problem, please open an issue.  
+If you find a bug or compatibility problem, please open an issue.
 
 If you have any enhancements or feature requests, create an issue.  If you like what you see, please star the repo.
 
@@ -85,11 +93,11 @@ Finally, if you have created a bot that other users may find useful, please cont
 #### Some important notes
 
 * The first time you run the docker container, the image needs to be pulled from the public docker registry and it will take some time.  Subsequent runs are super fast.
-* If you are not running Linux (i.e. if you are on a Mac or PC), you cannot use $PWD to mount the volumes.  Instead, [read this note here](https://docs.docker.com/userguide/dockervolumes/) (the 2nd note on the page: *If you are using Boot2Docker...*) to determine the absolute path where you must place the git-cloned directory.   
+* If you are not running Linux (i.e. if you are on a Mac or PC), you cannot use $PWD to mount the volumes.  Instead, [read this note here](https://docs.docker.com/userguide/dockervolumes/) (the 2nd note on the page: *If you are using Boot2Docker...*) to determine the absolute path where you must place the git-cloned directory.
 
 ### CONTRIBUTORS WANTED
 
-While it is functional, the current adapter is very basic.  We need all the help we can get to add capabilities.  
+While it is functional, the current adapter is very basic.  We need all the help we can get to add capabilities.
 
 Become part of the project, just pick an issue and file a PR.
 
@@ -105,7 +113,7 @@ A:  There are many positive and productive use cases for bots.    Imagine a cust
 * fetches personal information from the customer data base
 * fetches latest notes made by her/his salesperson from the CRM system
 * scans the customer's facebook and twitter posts
-* obtains details of the last support ticket for this customer 
+* obtains details of the last support ticket for this customer
 
 Putting it altogether and then private message the service rep with the information.
 
@@ -114,7 +122,7 @@ Another use-case is a load test bot, imagine a bot that accepts the command:
 ````
 rocketbot loadtest europe 25, asia 50, usa 100, canada 10
 ````
-This command specifies a distribution of test bot instances, to be created across globally located data centers.  
+This command specifies a distribution of test bot instances, to be created across globally located data centers.
 
 Once received, the bot:
 * parses the distribution
@@ -129,11 +137,11 @@ Learn more about hubot-meteorchat and other available drivers [at this link](htt
 
 #### If for some reasons, you can not run docker.  You can still perform bot development or launch a bot using the *classic* hubot method based on npm.
 
-Just follow the [very detailed instructions here](https://hubot.github.com/docs/).   Our npm module name is `hubot-rocketchat` and you need to start your hubot instance specifying the adapter name via `-a`: 
+Just follow the [very detailed instructions here](https://hubot.github.com/docs/).   Our npm module name is `hubot-rocketchat` and you need to start your hubot instance specifying the adapter name via `-a`:
 
 
 ```
-hubot -a rocketchat 
+hubot -a rocketchat
 
 ```
 
