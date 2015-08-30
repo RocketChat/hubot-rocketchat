@@ -37,4 +37,4 @@ ratings:
 # exclude_paths key.
 
 exclude_paths:
-- "/scripts/**/*"
+- "scripts/**/*"
