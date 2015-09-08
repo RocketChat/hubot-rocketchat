@@ -10,6 +10,10 @@ Run your bots on Rocket.Chat!
 [![Code Climate](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/gpa.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/RocketChat/Rocket.Chat/raw/master/LICENSE)
 
+#### NOTE
+If you want to integrate Rocket.Chat with Github or Gitlab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many bots that sink webhook events and access Github APIs. You can easily extend these bots for your custom application.
+
+
 ### Quickstart guide for bot writers
 
 Follow the quick start guide below to launch your bot.
