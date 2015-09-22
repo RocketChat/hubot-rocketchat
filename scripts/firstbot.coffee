@@ -17,5 +17,5 @@
 #   Sing-Li <sli@makawave.com>
 
 module.exports = (robot) ->
-  robot.respond /report status/i, (res) ->
-    res.reply "At your service!"
+	robot.respond /report status/i, (res) ->
+		res.reply "At your service!"
