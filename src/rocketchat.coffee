@@ -38,7 +38,7 @@ class RocketChatBotAdapter extends Adapter
 
                     for room in rooms
                         do(room) =>
-                            @chatdriver.joinRoom userid, RocketChatUser, room
+                            @chatdriver.joinRoom(userid, RocketChatUser, room)
                                 .then (result) =>
                                     @robot.logger.info "Successfully Joined Room: #{room}"
                                     @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: room})
