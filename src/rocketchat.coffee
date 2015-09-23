@@ -39,34 +39,30 @@ class RocketChatBotAdapter extends Adapter
                     for room in rooms
                         do(room) =>
                             @chatdriver.joinRoom userid, RocketChatUser, room
-                                .then (result) =>
-                                    @robot.logger.info "Successfully Joined Room: #{room}"
-                                    @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: room})
-                                        .then (arg) =>
-                                            @robot.logger.info "Subscription Ready"
-                                            @chatdriver.setupReactiveMessageList (newmsg) =>
-                                                if newmsg.u._id isnt userid
-                                                    curts = new Date(newmsg.ts.$date)
-                                                    @robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
-                                                    @robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
+                            @robot.logger.info "Successfully Joined Room: #{room}"
+                            @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: room})
+                                .then (arg) =>
+                                    @robot.logger.info "Subscription Ready"
+                                    @chatdriver.setupReactiveMessageList (newmsg) =>
+                                        if newmsg.u._id isnt userid
+                                            curts = new Date(newmsg.ts.$date)
+                                            @robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
+                                            @robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
 
-                                                    if curts > @lastts
-                                                        @lastts = curts
-                                                        user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-                                                        text = new TextMessage(user, newmsg.msg, newmsg._id)
+                                            if curts > @lastts
+                                                @lastts = curts
+                                                user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+                                                text = new TextMessage(user, newmsg.msg, newmsg._id)
 
-                                                        @robot.receive text
-                                                        @robot.logger.info "Message sent to hubot brain."
-                                        .catch (err) =>
-                                            @robot.logger.error "Error subscribing", err
-
+                                                @robot.receive text
+                                                @robot.logger.info "Message sent to hubot brain."
                                 .catch (err) =>
-                                    @robot.logger.error "Unable to Join Room: #{room} Reason: #{err.reason}"
+                                    @robot.logger.error "Error subscribing to room '#{room}':", err.reason
 
 
                     @emit 'connected'
                 .catch (err) =>
-                    @robot.logger.error "Unable to Login. Reason: #{err.reason}"
+                    @robot.logger.error "Unable to Login:", err
 
       send: (envelope, strings...) =>
             @chatdriver.sendMessage(str, envelope.room) for str in strings
