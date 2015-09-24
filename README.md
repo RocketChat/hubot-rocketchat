@@ -118,9 +118,23 @@ The example bot under `scripts` directory respeonds to:
 rocketbot report status
 ```
 
-### Developers
+## Developers
 
-If you would like to work on the adapter in docker you can:
+We like to make development as easy on ourselves as possible.  So passing the love on to you!
+
+### Adapter Development
+We'd love to have your help improving this adapter. PR's very welcome :smile:
+
+#### Docker
+
+First clone the source and then move into the directory.
+
+```
+git clone git@github.com:RocketChat/hubot-rocketchat.git
+cd hubot-rocketchat
+```
+
+Now we start the docker container.
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
@@ -132,6 +146,13 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 	-e DEV=true \
 	-v $PWD:/home/hubot/node_modules/hubot-rocketchat rocketchat/hubot-rocketchat
 ```
+
+#### Standard
+
+Installed in hubot you'd hop over into:
+
+`node_modules/hubot-rocketchat`
+
 
 #### Additional details
 Look under the `scripts` directory, you will find a very basic bot there.
