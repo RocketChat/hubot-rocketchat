@@ -1,49 +1,115 @@
 ![Rocket.Chat logo](https://rocket.chat/images/logo/logo-dark.svg?v3)
 
-# hubot-rocketchat
-
-Run your bots on Rocket.Chat!
-
-## About
-
 [![Test Coverage](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/coverage.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat/coverage)
 [![Code Climate](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/gpa.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/RocketChat/Rocket.Chat/raw/master/LICENSE)
 
+# hubot-rocketchat
+
+Hubot adapter for Rocket.Chat!
+
 #### NOTE
-If you want to integrate Rocket.Chat with Github or Gitlab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many bots that sink webhook events and access Github APIs. You can easily extend these bots for your custom application.
+If you want to integrate Rocket.Chat with Github or Gitlab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access Github/Gitlab APIs. You can easily extend these scripts for your custom application.
 
+## Getting your bot connected to Rocket.Chat
 
-### Quickstart guide for bot writers
+Here is a sample run:
 
-Follow the quick start guide below to launch your bot.
+![picture of a sample interaction with rocketbot](https://raw.githubusercontent.com/Sing-Li/bbug/master/images/botpic.png)
 
-You will need:
+We have a couple of ways for you to get up and started with the Rocket.Chat adapter.
 
-* node.js
-* git
-* docker
+### Docker
 
-First, clone this project.
-
-```
-git clone https://github.com/RocketChat/hubot-rocketchat.git
-```
-
-Change into the directory and install the dependencies.
+You can quickly spin up a docker image with:
 
 ```
-cd hubot-rocketchat
-npm install
+docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
+	-e ROCKETCHAT_ROOM=GENERAL \
+	-e ROCKETCHAT_USER=bot \
+	-e ROCKETCHAT_PASSWORD=bot \
+	-e BOT_NAME=bot \
+	-e EXTERNAL_SCRIPTS=hubot-pugme,hubot-help \
+	rocketchat/hubot-rocketchat
 ```
 
-Configure your bot - see **Additonal details** below.
+### Add adapter to hubot
 
-Run the docker container, and your bot is LIVE!
+#### New install
+You can specify the adapter during setup.
+
+First you need to install hubot
+
 ```
-docker run -it --rm -v $PWD:/home/hubot/node_modules/hubot-rocketchat -v $PWD/scripts:/home/hubot/scripts singli/hubot-rocketchat
+npm install -g yo generator-hubot
 ```
 
+Then you need to start the setup of the bot
+
+```
+% mkdir myhubot
+% cd myhubot
+% yo hubot
+```
+
+It'll ask you a few questions.  One will ask which adapter.  Put: `rocketchat`
+
+Also be sure to remember the name you specify.  This is what the bot will respond to in Rocket.Chat.
+
+You will need to tell the adapter where your install is and what login information to use.
+
+```
+export ROCKETCHAT_ROOM=GENERAL
+export ROCKETCHAT_USER=bot
+export ROCKETCHAT_PASSWORD=bot
+```
+
+Then start with: `bin/hubot -a rocketchat`
+
+[More Info Here](https://hubot.github.com/docs/)
+
+#### Existing install
+If you already have hubot setup you can add the adapter.
+
+By doing: `npm install hubot-rocketchat`
+
+You will need to tell the adapter where your install is and what login information to use.
+
+```
+export ROCKETCHAT_ROOM=GENERAL
+export ROCKETCHAT_USER=bot
+export ROCKETCHAT_PASSWORD=bot
+```
+
+Then starting your bot specifying the adapter: `bin/hubot -a rocketchat`
+
+#### Configuration Options
+
+Here are all of the options you can specify to configure the bot.
+
+On Docker you use: `-e VAR=Value`
+
+Regular hubot via: `export VAR=Value` or add to pm2 etc
+
+Environment Variable | Description
+:---- | :----
+ROCKETCHAT_URL | the IP and port where Rocket.Chat is running
+ROCKETCHAT_USER | the bot user's name
+ROCKETCHAT_PASSWORD | the bot user's password
+ROCKETCHAT_ROOM | the channel/channels ids the bot should join.  This can be comma separated list.
+BOT_NAME | ** Name of the bot.  This is what it responds to
+EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot.
+DEV | ** This enables development mode.
+
+** - Docker image only.
+
+### Channel/Room ID Notes
+
+Please note that right now you can't specify channels by name.
+
+Here is a quick way to grab channel ids.
+
+![getid](https://cloud.githubusercontent.com/assets/51996/10064636/1a6125f8-6240-11e5-92cc-d3d8606117e4.gif)
 
 ### Verify your bot is working
 Try:
@@ -60,32 +126,52 @@ The example bot under `scripts` directory respeonds to:
 rocketbot report status
 ```
 
-Here is a sample run:
+## Developers
 
-![picture of a sample interaction with rocketbot](https://raw.githubusercontent.com/Sing-Li/bbug/master/images/botpic.png)
+We like to make development as easy on ourselves as possible.  So passing the love on to you!
+
+### Adapter Development
+We'd love to have your help improving this adapter. PR's very welcome :smile:
+
+#### Docker
+
+First clone the source and then move into the directory.
+
+```
+git clone git@github.com:RocketChat/hubot-rocketchat.git
+cd hubot-rocketchat
+```
+
+Now we start the docker container.
+
+```
+docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
+	-e ROCKETCHAT_ROOM=GENERAL \
+	-e ROCKETCHAT_USER=bot \
+	-e ROCKETCHAT_PASSWORD=bot \
+	-e BOT_NAME=bot \
+	-e EXTERNAL_SCRIPTS=hubot-pugme,hubot-help \
+	-e DEV=true \
+	-v $PWD:/home/hubot/node_modules/hubot-rocketchat rocketchat/hubot-rocketchat
+```
+
+#### Standard
+
+Installed in hubot you'd hop over into `node_modules`.
+
+Delete the hubot-rocketchat folder.
+
+Then clone the git repo.
+
+```
+git clone git@github.com:RocketChat/hubot-rocketchat.git
+cd hubot-rocketchat
+```
 
 #### Additional details
 Look under the `scripts` directory, you will find a very basic bot there.
 
-Just add your own bot in the directory to have it loaded.  If you are new to bot writing, [this single page](https://hubot.github.com/docs/scripting/) contains everything you need to know.
-
-Obviously, you also need:
-
-* a user in Rocket.Chat that the bot will run under
-* a room including the bot user as a member
-
-Edit the src/rocketchat.coffee file to set:
-
-Variable | Environment Variable | Description
-:---- | :---- | :----
-RocketChatURL | ROCKETCHAT_URL | the IP and port where Rocket.Chat is running
-RocketChatUser | ROCKETCHAT_USER | the bot user's name
-RocketChatPassword | ROCKETCHAT_PASSWORD | the bot user's password
-RocketChatRoom | ROCKETCHAT_ROOM | the channel that the bot should join, take a look at the end of your URL while inside a channel to get the id
-
-Alternatively, you can use -e "\<environment var name\> = \<value\>"  to set the corresponding environment variable when you run the docker container.
-
-We are continually enhancing this adapter, any bot you write should remain compatible as we add capabilities.
+Just add your own script in the directory to have it loaded.  If you are new to hubot script writing, find out more [here](https://hubot.github.com/docs/scripting/).
 
 If you find a bug or compatibility problem, please open an issue.
 
@@ -137,15 +223,3 @@ Q:   The architecture of hubot-rocketchat looks interesting, can you tell me mor
 A:  Sure, it is based on hubot-meteorchat.  hubot-meteorchat is the hubot integration project for Meteor based chats and real-time messaging systems.  Its driver based architecture simplifies creation and cusotmization of adapter for new systems. For example, the hubot-rocketchat integration is just hubot-meteorchat + rocketchat driver.
 
 Learn more about hubot-meteorchat and other available drivers [at this link](https://github.com/Sing-Li/hubot-meteorchat).
-
-
-#### If for some reasons, you can not run docker.  You can still perform bot development or launch a bot using the *classic* hubot method based on npm.
-
-Just follow the [very detailed instructions here](https://hubot.github.com/docs/).   Our npm module name is `hubot-rocketchat` and you need to start your hubot instance specifying the adapter name via `-a`:
-
-
-```
-hubot -a rocketchat
-
-```
-
