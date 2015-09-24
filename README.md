@@ -96,12 +96,20 @@ Environment Variable | Description
 ROCKETCHAT_URL | the IP and port where Rocket.Chat is running
 ROCKETCHAT_USER | the bot user's name
 ROCKETCHAT_PASSWORD | the bot user's password
-ROCKETCHAT_ROOM | the channel/channels the bot should join.  This can be comma separated list.
+ROCKETCHAT_ROOM | the channel/channels ids the bot should join.  This can be comma separated list.
 BOT_NAME | ** Name of the bot.  This is what it responds to
 EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot.
 DEV | ** This enables development mode.
 
 ** - Docker image only.
+
+### Channel/Room ID Notes
+
+Please note that right now you can't specify channels by name.
+
+Here is a quick way to grab channel ids.
+
+![image](https://cloud.githubusercontent.com/assets/51996/10064595/8e2119e0-623f-11e5-840a-bde0739740ef.png)
 
 ### Verify your bot is working
 Try:
