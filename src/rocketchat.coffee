@@ -62,6 +62,7 @@ class RocketChatBotAdapter extends Adapter
 
                                 .catch (err) =>
                                     @robot.logger.error "Unable to Join Room: #{room} Reason: #{err.reason}"
+                                    @robot.logger.error "If joining GENERAL please make sure its using all caps"
 
 
                     @emit 'connected'
