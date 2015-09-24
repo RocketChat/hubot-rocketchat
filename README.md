@@ -109,7 +109,7 @@ Please note that right now you can't specify channels by name.
 
 Here is a quick way to grab channel ids.
 
-![image](https://cloud.githubusercontent.com/assets/51996/10064595/8e2119e0-623f-11e5-840a-bde0739740ef.png)
+![getid](https://cloud.githubusercontent.com/assets/51996/10064636/1a6125f8-6240-11e5-92cc-d3d8606117e4.gif)
 
 ### Verify your bot is working
 Try:
