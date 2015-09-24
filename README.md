@@ -149,10 +149,16 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 
 #### Standard
 
-Installed in hubot you'd hop over into:
+Installed in hubot you'd hop over into `node_modules`.
 
-`node_modules/hubot-rocketchat`
+Delete the hubot-rocketchat folder.
 
+Then clone the git repo.
+
+```
+git clone git@github.com:RocketChat/hubot-rocketchat.git
+cd hubot-rocketchat
+```
 
 #### Additional details
 Look under the `scripts` directory, you will find a very basic bot there.
