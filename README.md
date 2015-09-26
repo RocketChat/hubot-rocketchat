@@ -9,7 +9,7 @@
 Hubot adapter for Rocket.Chat!
 
 #### NOTE
-If you want to integrate Rocket.Chat with Github or Gitlab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access Github/Gitlab APIs. You can easily extend these scripts for your custom application.
+If you want to integrate Rocket.Chat with GitHub or GitLab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access GitHub/GitLab APIs. You can easily extend these scripts for your custom application.
 
 ## Getting your bot connected to Rocket.Chat
 
