@@ -166,6 +166,7 @@ Then clone the git repo.
 ```
 git clone git@github.com:RocketChat/hubot-rocketchat.git
 cd hubot-rocketchat
+npm install
 ```
 
 #### Additional details
