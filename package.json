@@ -1,48 +1,53 @@
 {
-	"name": "hubot-rocketchat",
-	"version": "0.0.9",
-	"author": {
-		"name": "Rocket.Chat",
-		"url": "http://rocket.chat/"
-	},
-	"contributors": [{
-		"name": "Sing Li",
-		"email": "sli@makawave.com"
-	},
-	{
-		"name": "Gabriel Engel",
-		"email": "gabriel.engel@gmail.com"
-	},
-	{
-		"name": "Aaron Ogle",
-		"email": "aaron@geekgonecrazy.com"
-	}],
-	"description": "Hubot Rocket.Chat Adapter",
-	"keywords": [
-		"hubot",
-		"adapter",
-		"rocketchat",
-		"rocket",
-		"chat"
-	],
-	"licenses": [{
-		"type": "MIT",
-		"url": "http://opensource.org/licenses/mit-license.php"
-	}],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/RocketChat/hubot-rocketchat.git"
-	},
-	"bugs": {
-		"url": "https://github.com/RocketChat/hubot-rocketchat/issues",
-		"email": "support@rocket.chat"
-	},
-	"devDependencies": {
-		"coffee-script": "~1.7.1"
-	},
-	"main": "./src/rocketchat",
-	"dependencies": {
-		"asteroid": "^0.6.1",
-		"parent-require": "^1.0.0"
-	}
+  "name": "hubot-rocketchat",
+  "version": "0.0.9",
+  "author": {
+    "name": "Rocket.Chat",
+    "url": "http://rocket.chat/"
+  },
+  "contributors": [
+    {
+      "name": "Sing Li",
+      "email": "sli@makawave.com"
+    },
+    {
+      "name": "Gabriel Engel",
+      "email": "gabriel.engel@gmail.com"
+    },
+    {
+      "name": "Aaron Ogle",
+      "email": "aaron@geekgonecrazy.com"
+    }
+  ],
+  "description": "Hubot Rocket.Chat Adapter",
+  "keywords": [
+    "hubot",
+    "adapter",
+    "rocketchat",
+    "rocket",
+    "chat"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RocketChat/hubot-rocketchat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RocketChat/hubot-rocketchat/issues",
+    "email": "support@rocket.chat"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.7.1"
+  },
+  "main": "./src/rocketchat",
+  "dependencies": {
+    "asteroid": "^0.6.1",
+    "parent-require": "^1.0.0",
+    "q": "^1.4.1"
+  }
 }
