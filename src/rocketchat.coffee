@@ -51,34 +51,36 @@ class RocketChatBotAdapter extends Adapter
 									for result, idx in res
 										@robot.logger.info "Successfully joined room: #{rooms[idx]}"
 										subs.push @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: rooms[idx]})	
+
+									Q.all(subs)
+										.then(
+											(results) => 
+												@robot.logger.info "all subscriptions ready"
+												for result, idx in results
+													@robot.logger.info "Successfully subscribed to room: #{rooms[idx]}"
+
+
+												@chatdriver.setupReactiveMessageList (newmsg) =>
+													if newmsg.u._id isnt userid
+														curts = new Date(newmsg.ts.$date)
+														@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
+														@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
+
+														if curts > @lastts
+															@lastts = curts
+															user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+															text = new TextMessage(user, newmsg.msg, newmsg._id)
+
+															@robot.receive text
+															@robot.logger.info "Message sent to hubot brain."
+											(err) =>
+												@robot.logger.error "Unable to subscribe: #{err} Reason: #{err.reason}"
+										)
+
 								(err) =>
 									@robot.logger.error "Unable to Join room: #{err} Reason: #{err.reason}"
 							)
 
-						Q.all(subs)
-							.then(
-								(results) => 
-									@robot.logger.info "all subscriptions ready"
-									for result, idx in results
-										@robot.logger.info "Successfully subscribed to room: #{rooms[idx]}"
-
-
-									@chatdriver.setupReactiveMessageList (newmsg) =>
-										if newmsg.u._id isnt userid
-											curts = new Date(newmsg.ts.$date)
-											@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
-											@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
-
-											if curts > @lastts
-												@lastts = curts
-												user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-												text = new TextMessage(user, newmsg.msg, newmsg._id)
-
-												@robot.receive text
-												@robot.logger.info "Message sent to hubot brain."
-								(err) =>
-									@robot.logger.error "Unable to subscribe: #{err} Reason: #{err.reason}"
-							)
 
 					(err) =>
 						@robot.logger.error "Unable to Login: #{err} Reason: #{err.reason}"
