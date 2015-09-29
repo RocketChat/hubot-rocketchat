@@ -21,7 +21,7 @@ class RocketChatDriver
 
         r = @asteroid.call 'joinRoom', roomid
 
-        return r.result
+        return r.updated
 
     sendMessage: (text, roomid) =>
         @logger.info "Sending Message To Room: #{roomid}"
@@ -44,8 +44,9 @@ class RocketChatDriver
         return msgsub.ready
 
     setupReactiveMessageList: (receiveMessageCallback) =>
-        @logger.info "Setting up reactive message list"
+        @logger.info "Setting up reactive message list..."
         @messages = @asteroid.getCollection _messageCollection
+   
         rQ = @messages.reactiveQuery {}
         rQ.on "change", (id) =>
             # awkward syntax due to asteroid limitations
