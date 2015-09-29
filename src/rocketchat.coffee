@@ -7,7 +7,7 @@ Q = require 'q'
 Chatdriver = require './rocketchat_driver'
 
 RocketChatURL = process.env.ROCKETCHAT_URL or "localhost:3000"
-RocketChatRoom = process.env.ROCKETCHAT_ROOM or "GENERAL,Z5y5Tj8RDQYkKoA5k,4RAoPBxyCdza8yx9M,YMMDnhwdK8zvpBnp5"
+RocketChatRoom = process.env.ROCKETCHAT_ROOM or "GENERAL"
 RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
 RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
 
