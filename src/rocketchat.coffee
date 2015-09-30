@@ -1,8 +1,8 @@
 try
-	  {Robot,Adapter,TextMessage,User} = require 'hubot'
+	  {Robot,Adapter,TextMessage, EnterMessage, User} = require 'hubot'
 catch
 	  prequire = require('parent-require')
-	  {Robot,Adapter,TextMessage,User} = prequire 'hubot'
+	  {Robot,Adapter,TextMessage, EnterMessage, User} = prequire 'hubot'
 Q = require 'q'
 Chatdriver = require './rocketchat_driver'
 
@@ -61,18 +61,23 @@ class RocketChatBotAdapter extends Adapter
 
 
 												@chatdriver.setupReactiveMessageList (newmsg) =>
-													if newmsg.u._id isnt userid
+													if (newmsg.u._id isnt userid)  || (newmsg.t is 'uj')
 														curts = new Date(newmsg.ts.$date)
 														@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
 														@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
 
 														if curts > @lastts
 															@lastts = curts
-															user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-															text = new TextMessage(user, newmsg.msg, newmsg._id)
+															if newmsg.t isnt 'uj'
+																user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+																text = new TextMessage(user, newmsg.msg, newmsg._id)
+																@robot.receive text
+																@robot.logger.info "Message sent to hubot brain."
+															else   # enter room message
+																if newmsg.u._id isnt userid
+																	user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+																	@robot.receive new EnterMessage user, null, newmsg._id
 
-															@robot.receive text
-															@robot.logger.info "Message sent to hubot brain."
 											(err) =>
 												@robot.logger.error "Unable to subscribe: #{err} Reason: #{err.reason}"
 										)
