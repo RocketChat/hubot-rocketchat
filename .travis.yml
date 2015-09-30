@@ -6,6 +6,8 @@ node_js:
 - '0.10'
 before_install:
 - npm install -g npm@'>=2.13.5'
+after_deploy:
+- curl -H "Content-Type: application/json" --data '{"build": true}' -X POST https://registry.hub.docker.com/u/rocketchat/hubot-rocketchat/trigger/$PUSHTOKEN/ 
 deploy:
   provider: npm
   email: buildmaster@rocket.chat
