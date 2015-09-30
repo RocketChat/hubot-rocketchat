@@ -2,9 +2,6 @@ sudo: required
 services:
   - docker
 language: node_js
-branches:
-  only:
-    - travis-my-good-friend
 node_js:
   - '0.10'
 deploy:
