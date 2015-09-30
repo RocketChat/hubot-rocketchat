@@ -1,0 +1,20 @@
+sudo: required
+services:
+  - docker
+language: node_js
+branches:
+  only:
+    - travis-my-good-friend
+node_js:
+  - '0.10'
+deploy:
+  provider: npm
+  email: buildmaster@rocket.chat
+  on:
+      tags: true
+      all_branches: true
+  skip_cleanup: true
+  api_key:
+      secure: W11LoeJh+y1KqCCCn1LACtPwZp5iHS/4KJU1lragVByANkRnxGCFFHtonhKu5z71eZfARrv4Q+4JqN7kD4fobz4hYzfMtHnX/0MTlutmLyuNA7ntzPWyZNFcWACwCJnUY0XioDZf6Y3Ypmov8C1hhoZCAN90fkYJdDlE/KymjxO8Kd4dKAXoGuiiUz3I7szx47W4gWItfXghErGu6lOAlnsE1t1+d+HZREOmqgJSAZtuU+5bg5SV0TrYg7MedJXSmtHhxVJrJsgw3pGPuQU9dymY5ttw5s2+SQhWszByfNVcTorM7iyQpL2OB5/My77pI6ipLrX7kY/yUfUrM97SEfd62nRLhLuwiTZoQcAc8hixw4IKTLv8bWHDcFpqjDUCpPQnLGgG4D0KVLfgQ2qKA58gF8rdYpKnpuLIdi9UvQjFJoRAlJ87OsHQwnqVmcvo43aaMMGPn/6iRIeuzgn0W2ximgBLgjzY+MKjHyZe9nT9lMNx+m2jSwndzPsbDRoakJ0qkUb9ons4FvTQNZZ4Kd+ZUfVr6jX3vPveVIubHFoV7PIwbMwxeTY/xWZEuvMsQJQFdpk0na9aiICX9S7FFiiB35QZelRoFKoYs+/nLFFeLhkefhF3Y3dSO1TOjLyA6g5YkWIKUtuo6JFII4Wyir8wzq7m01ykEhVrjRS74Lc=
+before_deploy: 
+after_deploy: 
