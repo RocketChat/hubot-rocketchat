@@ -1,0 +1,19 @@
+sudo: required
+services:
+- docker
+language: node_js
+node_js:
+- '0.10'
+before_install:
+- npm install -g npm@'>=2.13.5'
+after_deploy:
+- "curl -H \"Content-Type: application/json\" --data \"{'build': true}\" -X POST https://registry.hub.docker.com/u/rocketchat/hubot-rocketchat/trigger/$PUSHTOKEN/" 
+deploy:
+  provider: npm
+  email: buildmaster@rocket.chat
+  on:
+    tags: true
+    all_branches: true
+  skip_cleanup: true
+  api_key:
+    secure: QV9PS3e+IR2gNBjG1d7Cw2xmWfFt2f/P4TXTdcjKty8ugypqau+2I/TM/NJ44yuTuRGde88U4E3vFqwt5du7BUqSgffkbF0VEh+Qh1iuWeqZWJCknmwKIk2YepDce+7/JZILfHnz2R3w9+sfixLe6NIyyl/92PAtZXMOqgobEZFaK2MotZihjBBHwmq86vHkf2ofx1PRkEooLhwvOvUeCXbJNYHYrdna43J9SX3aKlcWkiKRBqBNLm6Z70e8wA/EKRIj0/LJs+mrCbx1zQL/P7vj/ZCWmO3e6pBUjp7PO0Qp8CFBaDnhCU1akjZzoO/dqCWY+B5IJsOexAWD9zR9k1DS4QmuHvajCKCX5CMGqPsR9CSo67ZDpOdi9HhtYqTUHHKoAK4y0Fc/nxI9YPUZwvQWGe20meiodZEV2ttdfm3CRpAUyBen7D0ulEAyVmU0EZ+0iAnx8Y6kGp9EfgaZu5hCAmcHr94bM/w3rRWs+DW4cI4sve2e0Md9uzKaZ2HstcEGkLMskYkJJIpb8Yz6wJmWId7drgkymVnnFTH+WWIJmdiGSMNQcnMTmCm9WbVaNMk+6HMUyddvGbQfZ2JaebX49V4EhCKvXp9dtSyC1QnG9LFdC+T3QPW6cA7ijGbwuPsQyXPiVEIn+LxskF3SrjnDHaZ5TxdstVWnXj0Dh30=
