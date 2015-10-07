@@ -92,7 +92,7 @@ class RocketChatBotAdapter extends Adapter
 						@robot.logger.error "If joining GENERAL please make sure its using all caps"
 				)
 								
-				@emit 'connected'
+			@emit 'connected'
 				
 	send: (envelope, strings...) =>
 			@chatdriver.sendMessage(str, envelope.room) for str in strings
