@@ -33,6 +33,22 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 	rocketchat/hubot-rocketchat
 ```
 
+#### Custom Scripts
+
+If you want to include your own custom scripts you can by doing:
+
+```
+docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
+	-e ROCKETCHAT_ROOM=GENERAL \
+	-e ROCKETCHAT_USER=bot \
+	-e ROCKETCHAT_PASSWORD=bot \
+	-e BOT_NAME=bot \
+	-e EXTERNAL_SCRIPTS=hubot-pugme,hubot-help \
+	-v $PWD/scripts:/home/hubot/scritps \
+	rocketchat/hubot-rocketchat
+```
+
+
 ### Add adapter to hubot
 
 #### New install
