@@ -16,6 +16,13 @@ class RocketChatDriver
         @asteroid.on 'connected', ->
             cb()
 
+    getRoomId: (roomid) =>
+        @logger.info "Joining Room: #{roomid}"
+
+        r = @asteroid.call 'getRoomIdByNameOrId', roomid
+
+        return r.result
+
     joinRoom: (userid, uname, roomid, cb) =>
         @logger.info "Joining Room: #{roomid}"
 
