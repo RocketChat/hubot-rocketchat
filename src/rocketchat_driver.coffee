@@ -10,30 +10,30 @@ _messageCollection = 'rocketchat_message'
 # plugs into generic rocketchatbotadapter
 
 class RocketChatDriver
-    constructor: (url, @logger, cb) ->
+	constructor: (url, @logger, cb) ->
         @asteroid = new Asteroid(url)
 
         @asteroid.on 'connected', ->
             cb()
 
-    joinRoom: (userid, uname, roomid, cb) =>
+	joinRoom: (userid, uname, roomid, cb) =>
         @logger.info "Joining Room: #{roomid}"
 
         r = @asteroid.call 'joinRoom', roomid
 
         return r.updated
 
-    sendMessage: (text, roomid) =>
+	sendMessage: (text, roomid) =>
         @logger.info "Sending Message To Room: #{roomid}"
 
         @asteroid.call('sendMessage', {msg: text, rid: roomid})
 
-    login: (username, password) =>
+	login: (username, password) =>
         @logger.info "Logging In"
         # promise returned
         return @asteroid.loginWithPassword username, password
 
-    prepMeteorSubscriptions: (data) =>
+	prepMeteorSubscriptions: (data) =>
         # use data to cater for param differences - until we learn more
         #    data.uid
         #    data.roomid
@@ -43,10 +43,10 @@ class RocketChatDriver
         @logger.info "Subscribing to Room: #{data.roomid}"
         return msgsub.ready
 
-    setupReactiveMessageList: (receiveMessageCallback) =>
+	setupReactiveMessageList: (receiveMessageCallback) =>
         @logger.info "Setting up reactive message list..."
         @messages = @asteroid.getCollection _messageCollection
-   
+
         rQ = @messages.reactiveQuery {}
         rQ.on "change", (id) =>
             # awkward syntax due to asteroid limitations
@@ -57,5 +57,17 @@ class RocketChatDriver
                 changedMsg = changedMsgQuery.result[0]
             if changedMsg and changedMsg.msg and changedMsg.msg != "..."
                 receiveMessageCallback changedMsg
+
+	setup: (cmds) =>
+		@logger.info "AUTO"
+
+		commands = []
+
+		for cmd in cmds
+			ref = cmd.replace('hubot ', '').split(' - ')
+
+			commands.push {command: ref[0], description: ref[1]}
+
+		@asteroid.call("addBotCommands", {commands: commands})
 
 module.exports = RocketChatDriver

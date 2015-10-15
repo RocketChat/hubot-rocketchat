@@ -38,6 +38,8 @@ class RocketChatBotAdapter extends Adapter
 				.then(
 					(userid) =>
 						@robot.logger.info "Successfully Logged In"
+
+						@chatdriver.setup(@robot.commands)
 						joinrooms = []
 						subs = []
 						for room in rooms
@@ -50,11 +52,11 @@ class RocketChatBotAdapter extends Adapter
 									@robot.logger.info "all rooms joined"
 									for result, idx in res
 										@robot.logger.info "Successfully joined room: #{rooms[idx]}"
-										subs.push @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: rooms[idx]})	
+										subs.push @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: rooms[idx]})
 
 									Q.all(subs)
 										.then(
-											(results) => 
+											(results) =>
 												@robot.logger.info "all subscriptions ready"
 												for result, idx in results
 													@robot.logger.info "Successfully subscribed to room: #{rooms[idx]}"
@@ -91,9 +93,9 @@ class RocketChatBotAdapter extends Adapter
 						@robot.logger.error "Unable to Login: #{err} Reason: #{err.reason}"
 						@robot.logger.error "If joining GENERAL please make sure its using all caps"
 				)
-								
+
 			@emit 'connected'
-				
+
 	send: (envelope, strings...) =>
 			@chatdriver.sendMessage(str, envelope.room) for str in strings
 
