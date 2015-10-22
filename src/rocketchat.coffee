@@ -39,52 +39,64 @@ class RocketChatBotAdapter extends Adapter
 					(userid) =>
 						@robot.logger.info "Successfully Logged In"
 						joinrooms = []
+						roomids = []
 						subs = []
 						for room in rooms
 							do(room) =>
-								joinrooms.push @chatdriver.joinRoom(userid, RocketChatUser, room)
+								roomids.push  @chatdriver.getRoomId(room)
 
-						Q.all(joinrooms)
-							.then(
-								(res) =>
-									@robot.logger.info "all rooms joined"
-									for result, idx in res
-										@robot.logger.info "Successfully joined room: #{rooms[idx]}"
-										subs.push @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: rooms[idx]})	
+						Q.all(roomids).then(
+							(room_ids) =>
+								for result, index in room_ids
+									rooms[index] = result
+									joinrooms.push @chatdriver.joinRoom(userid, RocketChatUser, result)
 
-									Q.all(subs)
-										.then(
-											(results) => 
-												@robot.logger.info "all subscriptions ready"
-												for result, idx in results
-													@robot.logger.info "Successfully subscribed to room: #{rooms[idx]}"
+								@robot.logger.info "rid: ", room_ids
+								Q.all(joinrooms)
+									.then(
+										(res) =>
+											@robot.logger.info "all rooms joined"
+											for result, idx in res
+												@robot.logger.info "Successfully joined room: #{rooms[idx]}"
+												subs.push @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: rooms[idx]})
+
+											Q.all(subs)
+												.then(
+													(results) =>
+														@robot.logger.info "all subscriptions ready"
+														for result, idx in results
+															@robot.logger.info "Successfully subscribed to room: #{rooms[idx]}"
 
 
-												@chatdriver.setupReactiveMessageList (newmsg) =>
-													if (newmsg.u._id isnt userid)  || (newmsg.t is 'uj')
-														curts = new Date(newmsg.ts.$date)
-														@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
-														@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
+														@chatdriver.setupReactiveMessageList (newmsg) =>
+															if (newmsg.u._id isnt userid)  || (newmsg.t is 'uj')
+																curts = new Date(newmsg.ts.$date)
+																@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
+																@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
 
-														if curts > @lastts
-															@lastts = curts
-															if newmsg.t isnt 'uj'
-																user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-																text = new TextMessage(user, newmsg.msg, newmsg._id)
-																@robot.receive text
-																@robot.logger.info "Message sent to hubot brain."
-															else   # enter room message
-																if newmsg.u._id isnt userid
-																	user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-																	@robot.receive new EnterMessage user, null, newmsg._id
+																if curts > @lastts
+																	@lastts = curts
+																	if newmsg.t isnt 'uj'
+																		user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+																		text = new TextMessage(user, newmsg.msg, newmsg._id)
+																		@robot.receive text
+																		@robot.logger.info "Message sent to hubot brain."
+																	else   # enter room message
+																		if newmsg.u._id isnt userid
+																			user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+																			@robot.receive new EnterMessage user, null, newmsg._id
 
-											(err) =>
-												@robot.logger.error "Unable to subscribe: #{err} Reason: #{err.reason}"
-										)
+													(err) =>
+														@robot.logger.error "Unable to subscribe: #{err} Reason: #{err.reason}"
+												)
 
-								(err) =>
-									@robot.logger.error "Unable to Join room: #{err} Reason: #{err.reason}"
-							)
+										(err) =>
+											@robot.logger.error "Unable to Join room: #{err} Reason: #{err.reason}"
+									)
+
+							(error) =>
+								@robot.logger.error "Unable to get room id: #{err} Reason: #{err.reason}"
+						)
 
 
 					(err) =>
