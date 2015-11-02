@@ -53,7 +53,7 @@ class RocketChatDriver
     setupReactiveMessageList: (receiveMessageCallback) =>
         @logger.info "Setting up reactive message list..."
         @messages = @asteroid.getCollection _messageCollection
-   
+
         rQ = @messages.reactiveQuery {}
         rQ.on "change", (id) =>
             # awkward syntax due to asteroid limitations
@@ -64,5 +64,10 @@ class RocketChatDriver
                 changedMsg = changedMsgQuery.result[0]
             if changedMsg and changedMsg.msg and changedMsg.msg != "..."
                 receiveMessageCallback changedMsg
+
+    callMethod: (name, args = []) =>
+        @logger.info "Calling: #{name}, #{args.join(', ')}"
+        r = @asteroid.apply name, args
+        return r.result
 
 module.exports = RocketChatDriver

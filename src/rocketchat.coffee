@@ -103,9 +103,9 @@ class RocketChatBotAdapter extends Adapter
 						@robot.logger.error "Unable to Login: #{err} Reason: #{err.reason}"
 						@robot.logger.error "If joining GENERAL please make sure its using all caps"
 				)
-								
+
 			@emit 'connected'
-				
+
 	send: (envelope, strings...) =>
 			@chatdriver.sendMessage(str, envelope.room) for str in strings
 
@@ -114,5 +114,8 @@ class RocketChatBotAdapter extends Adapter
 			strings = strings.map (s) -> "@#{envelope.user.name} #{s}"
 			@send envelope, strings...
 
+	callMethod: (method, args...) =>
+		@chatdriver.callMethod(method, args)
+
 exports.use = (robot) ->
-	  new RocketChatBotAdapter robot
+	new RocketChatBotAdapter robot
