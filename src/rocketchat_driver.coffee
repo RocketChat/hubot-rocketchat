@@ -35,6 +35,13 @@ class RocketChatDriver
 
         @asteroid.call('sendMessage', {msg: text, rid: roomid})
 
+    sendDirectMessage: (username, text) ->
+        @logger.info "Sending Direct Message To: @{username}"
+
+        @asteroid.call "createDirectMessage", username, (err, result) ->
+            if !err
+                @asteroid.call "sendMessage", {msg: text, rid: result.rid}
+
     login: (username, password) =>
         @logger.info "Logging In"
         # promise returned
