@@ -44,7 +44,7 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e BOT_NAME=bot \
 	-e EXTERNAL_SCRIPTS=hubot-pugme,hubot-help \
-	-v $PWD/scripts:/home/hubot/scritps \
+	-v $PWD/scripts:/home/hubot/scripts \
 	rocketchat/hubot-rocketchat
 ```
 
