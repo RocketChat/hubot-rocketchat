@@ -2,9 +2,9 @@ Asteroid = require 'asteroid'
 
 # TODO:   need to grab these values from process.env[]
 
-_msgsubtopic = 'messages'
+_msgsubtopic = 'stream-messages' # 'messages'
 _msgsublimit = 10   # this is not actually used right now
-_messageCollection = 'rocketchat_message'
+_messageCollection = 'stream-messages'
 
 # driver specific to Rocketchat hubot integration
 # plugs into generic rocketchatbotadapter
@@ -60,10 +60,12 @@ class RocketChatDriver
             # - it ain't no minimongo cursor
             @logger.info "Change received on ID " + id
             changedMsgQuery = @messages.reactiveQuery {"_id": id}
-            if changedMsgQuery.result
+            if changedMsgQuery.result && changedMsgQuery.result.length > 0
+                # console.log('result:', JSON.stringify(changedMsgQuery.result, null, 2))
                 changedMsg = changedMsgQuery.result[0]
-            if changedMsg and changedMsg.msg and changedMsg.msg != "..."
-                receiveMessageCallback changedMsg
+                # console.log('changed:', JSON.stringify(changedMsg, null, 2));
+                if changedMsg.args?
+                    receiveMessageCallback changedMsg.args[1]
 
     callMethod: (name, args = []) =>
         @logger.info "Calling: #{name}, #{args.join(', ')}"
