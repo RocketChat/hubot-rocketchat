@@ -10,6 +10,7 @@ RocketChatURL = process.env.ROCKETCHAT_URL or "localhost:3000"
 RocketChatRoom = process.env.ROCKETCHAT_ROOM or "GENERAL"
 RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
 RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
+ListenOnAllPublicRooms = process.env.LISTEN_ON_ALL_PUBLIC or "false"
 
 class RocketChatBotAdapter extends Adapter
 
@@ -70,21 +71,22 @@ class RocketChatBotAdapter extends Adapter
 
 														@chatdriver.setupReactiveMessageList (newmsg) =>
 															if (newmsg.u._id isnt userid)  || (newmsg.t is 'uj')
-																curts = new Date(newmsg.ts.$date)
-																@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
-																@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
+																if (newmsg.rid in room_ids)  || (ListenOnAllPublicRooms.toLowerCase() is 'true')
+																	curts = new Date(newmsg.ts.$date)
+																	@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
+																	@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
 
-																if curts > @lastts
-																	@lastts = curts
-																	if newmsg.t isnt 'uj'
-																		user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-																		text = new TextMessage(user, newmsg.msg, newmsg._id)
-																		@robot.receive text
-																		@robot.logger.info "Message sent to hubot brain."
-																	else   # enter room message
-																		if newmsg.u._id isnt userid
+																	if curts > @lastts
+																		@lastts = curts
+																		if newmsg.t isnt 'uj'
 																			user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-																			@robot.receive new EnterMessage user, null, newmsg._id
+																			text = new TextMessage(user, newmsg.msg, newmsg._id)
+																			@robot.receive text
+																			@robot.logger.info "Message sent to hubot brain."
+																		else   # enter room message
+																			if newmsg.u._id isnt userid
+																				user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+																				@robot.receive new EnterMessage user, null, newmsg._id
 
 													(err) =>
 														@robot.logger.error "Unable to subscribe: #{err} Reason: #{err.reason}"
