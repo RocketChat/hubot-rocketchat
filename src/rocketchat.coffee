@@ -11,7 +11,7 @@ RocketChatRoom = process.env.ROCKETCHAT_ROOM or "GENERAL"
 RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
 RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
 ListenOnAllPublicRooms = process.env.LISTEN_ON_ALL_PUBLIC or "false"
-
+RespondToDirectMessage = process.env.RESPOND_TO_DM or "false"
 class RocketChatBotAdapter extends Adapter
 
 	run: =>
@@ -71,7 +71,7 @@ class RocketChatBotAdapter extends Adapter
 
 														@chatdriver.setupReactiveMessageList (newmsg) =>
 															if (newmsg.u._id isnt userid)  || (newmsg.t is 'uj')
-																if (newmsg.rid in room_ids)  || (ListenOnAllPublicRooms.toLowerCase() is 'true')
+																if (newmsg.rid in room_ids)  || (ListenOnAllPublicRooms.toLowerCase() is 'true') ||  ((RespondToDirectMessage.toLowerCase() is 'true') && (newmsg.rid.indexOf(userid) > -1))
 																	curts = new Date(newmsg.ts.$date)
 																	@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
 																	@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
