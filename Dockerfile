@@ -8,6 +8,8 @@ USER hubot
 
 WORKDIR /home/hubot
 
+EXPOSE 80
+
 ENV DEV false
 
 ENV BOT_NAME "rocketbot"
