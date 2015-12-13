@@ -113,8 +113,8 @@ ROCKETCHAT_URL | the IP and port where Rocket.Chat is running
 ROCKETCHAT_USER | the bot user's name
 ROCKETCHAT_PASSWORD | the bot user's password
 ROCKETCHAT_ROOM | the channel/channels names the bot should listen to message from.  This can be comma separated list.
-LISTEN_ON_ALL_PUBLIC | if 'true' then bot will listen and respond to messages from all public channels, as well as respond to direct messages. Default to 'false'. ROCKETCHAT_ROOM should not be specified if this is 'true'.
-RESPOND_ON_DM | if 'true' then bot will listen and respond to direct messages. This should never be used in conjunction with LISTEN_ON_ALL_PUBLIC. And ROCKETCHAT_ROOM should always be specified when setting this variable to 'true'.  Default is 'false'.
+LISTEN_ON_ALL_PUBLIC | if 'true' then bot will listen and respond to messages from all public channels, as well as respond to direct messages. Default to 'false'. ROCKETCHAT_ROOM should not be set to nothing (with `ROCKETCHAT_ROOM=` ) when using `LISTEN_ON_ALL_PUBLIC`.
+RESPOND_ON_DM | if 'true' then bot will listen and respond to direct messages. This option needs not be set if you are including LISTEN_ON_ALL_PUBLIC.   When setting the option to 'true', be sure to also set ROCKETCHAT_ROOM.  Default is 'false'.
 BOT_NAME | ** Name of the bot.  This is what it responds to
 EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot.
 DEV | ** This enables development mode.
