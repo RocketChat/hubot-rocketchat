@@ -1,8 +1,8 @@
 try
-	  {Robot,Adapter,TextMessage, EnterMessage, User} = require 'hubot'
+		{Robot,Adapter,TextMessage, EnterMessage, User} = require 'hubot'
 catch
-	  prequire = require('parent-require')
-	  {Robot,Adapter,TextMessage, EnterMessage, User} = prequire 'hubot'
+		prequire = require('parent-require')
+		{Robot,Adapter,TextMessage, EnterMessage, User} = prequire 'hubot'
 Q = require 'q'
 Chatdriver = require './rocketchat_driver'
 
@@ -28,85 +28,102 @@ class RocketChatBotAdapter extends Adapter
 
 		@robot.logger.info "Connecting To: #{RocketChatURL}"
 
+		room_ids = null
+		userid = null
+
 		@chatdriver = new Chatdriver RocketChatURL, @robot.logger, =>
-			@robot.logger.info "Successfully Connected!"
+			@robot.logger.info "Successfully connected!"
 			@robot.logger.info RocketChatRoom
 
 			rooms = RocketChatRoom.split(',')
 			# @robot.logger.info JSON.stringify(rooms)
 
+			# Log in
 			@chatdriver.login(RocketChatUser, RocketChatPassword)
-				.then(
-					(userid) =>
-						@robot.logger.info "Successfully Logged In"
-						joinrooms = []
-						roomids = []
-						subs = []
-						for room in rooms
-							do(room) =>
-								roomids.push  @chatdriver.getRoomId(room)
+			.catch((loginErr) => # Only catch in the main chain aside from final exit
+				@robot.logger.error "Unable to Login: #{JSON.stringify(loginErr)} Reason: #{loginErr.reason}"
+				@robot.logger.error "If joining GENERAL please make sure its using all caps."
+				@robot.logger.error "If using LDAP, turn off LDAP, and turn on general user registration with email
+					verification off."
+				throw loginErr #rethrow to exit the chain
+			)
+			# Get room IDS
+			.then((_userid) =>
+				userid = _userid
+				@robot.logger.info "Successfully Logged In"
+				roomids = []
+				for room in rooms
+					do(room) =>
+						roomids.push	@chatdriver.getRoomId(room)
 
-						Q.all(roomids).then(
-							(room_ids) =>
-								for result, index in room_ids
-									rooms[index] = result
-									joinrooms.push @chatdriver.joinRoom(userid, RocketChatUser, result)
-
-								@robot.logger.info "rid: ", room_ids
-								Q.all(joinrooms)
-									.then(
-										(res) =>
-											@robot.logger.info "all rooms joined"
-											for result, idx in res
-												@robot.logger.info "Successfully joined room: #{rooms[idx]}"
-												subs.push @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: rooms[idx]})
-
-											Q.all(subs)
-												.then(
-													(results) =>
-														@robot.logger.info "all subscriptions ready"
-														for result, idx in results
-															@robot.logger.info "Successfully subscribed to room: #{rooms[idx]}"
-
-
-														@chatdriver.setupReactiveMessageList (newmsg) =>
-															if (newmsg.u._id isnt userid)  || (newmsg.t is 'uj')
-																if (newmsg.rid in room_ids)  || (ListenOnAllPublicRooms.toLowerCase() is 'true') ||  ((RespondToDirectMessage.toLowerCase() is 'true') && (newmsg.rid.indexOf(userid) > -1))
-																	curts = new Date(newmsg.ts.$date)
-																	@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
-																	@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
-
-																	if curts > @lastts
-																		@lastts = curts
-																		if newmsg.t isnt 'uj'
-																			user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-																			text = new TextMessage(user, newmsg.msg, newmsg._id)
-																			@robot.receive text
-																			@robot.logger.info "Message sent to hubot brain."
-																		else   # enter room message
-																			if newmsg.u._id isnt userid
-																				user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-																				@robot.receive new EnterMessage user, null, newmsg._id
-
-													(err) =>
-														@robot.logger.error "Unable to subscribe: #{err} Reason: #{err.reason}"
-												)
-
-										(err) =>
-											@robot.logger.error "Unable to Join room: #{err} Reason: #{err.reason}"
-									)
-
-							(error) =>
-								@robot.logger.error "Unable to get room id: #{err} Reason: #{err.reason}"
-						)
-
-
-					(err) =>
-						@robot.logger.error "Unable to Login: #{err} Reason: #{err.reason}"
-						@robot.logger.error "If joining GENERAL please make sure its using all caps"
+				return Q.all(roomids)
+				.catch((roomErr) =>
+					@robot.logger.error "Unable to get room id: #{JSON.stringify(roomErr)} Reason: #{roomErr.reason}"
+					throw roomErr
 				)
+			)
+			# Join all specified rooms
+			.then((_room_ids) =>
+				room_ids = _room_ids
+				joinrooms = []
+				for result, index in room_ids
+					rooms[index] = result
+					joinrooms.push @chatdriver.joinRoom(userid, RocketChatUser, result)
 
-			@emit 'connected'
+				@robot.logger.info "rid: ", room_ids
+				return Q.all(joinrooms)
+				.catch((joinErr) =>
+					@robot.logger.error "Unable to Join room: #{JSON.stringify(joinErr)} Reason: #{joinErr.reason}"
+					throw joinErr
+				)
+			)
+			# Subscribe to msgs in all rooms
+			.then((res) =>
+				@robot.logger.info "All rooms joined."
+				subs = []
+				for result, idx in res
+					@robot.logger.info "Successfully joined room: #{rooms[idx]}"
+					subs.push @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: rooms[idx]})
+
+				return Q.all(subs)
+				.catch((subErr) =>
+					@robot.logger.error "Unable to subscribe: #{JSON.stringify(subErr)} Reason: #{subErr.reason}"
+					throw subErr
+				)
+			)
+			# Setup msg callbacks
+			.then((results) =>
+				@robot.logger.info "All subscriptions ready."
+				for result, idx in results
+					@robot.logger.info "Successfully subscribed to room: #{rooms[idx]}"
+
+				@chatdriver.setupReactiveMessageList (newmsg) =>
+					if (newmsg.u._id isnt userid) || (newmsg.t is 'uj')
+						if (newmsg.rid in room_ids)	|| (ListenOnAllPublicRooms.toLowerCase() is 'true') ||	((RespondToDirectMessage.toLowerCase() is 'true') && (newmsg.rid.indexOf(userid) > -1))
+							curts = new Date(newmsg.ts.$date)
+							@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
+							@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
+
+							if curts > @lastts
+								@lastts = curts
+								if newmsg.t isnt 'uj'
+									user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+									text = new TextMessage(user, newmsg.msg, newmsg._id)
+									@robot.receive text
+									@robot.logger.info "Message sent to hubot brain."
+								else	 # enter room message
+									if newmsg.u._id isnt userid
+										user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
+										@robot.receive new EnterMessage user, null, newmsg._id
+			)
+			.then(() =>
+				@emit 'connected'
+			)
+			# Final exit, all throws skip to here
+			.catch((err) =>
+				@robot.logger.error JSON.stringify(err)
+				@robot.logger.error "Unable to complete setup. See https://github.com/RocketChat/hubot-rocketchat for more info."
+			)
 
 	send: (envelope, strings...) =>
 			@chatdriver.sendMessage(str, envelope.room) for str in strings
