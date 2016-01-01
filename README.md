@@ -25,7 +25,8 @@ You can quickly spin up a docker image with:
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM=GENERAL \
+	-e ROCKETCHAT_ROOM='' \
+	-e LISTEN_ON_ALL_PUBLIC=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e BOT_NAME=bot \
@@ -39,7 +40,8 @@ If you want to include your own custom scripts you can by doing:
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM=GENERAL \
+	-e ROCKETCHAT_ROOM='' \
+	-e LISTEN_ON_ALL_PUBLIC=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e BOT_NAME=bot \
@@ -75,7 +77,8 @@ Also be sure to remember the name you specify.  This is what the bot will respon
 You will need to tell the adapter where your install is and what login information to use.
 
 ```
-export ROCKETCHAT_ROOM=GENERAL
+export ROCKETCHAT_ROOM=''
+export LISTEN_ON_ALL_PUBLIC=true
 export ROCKETCHAT_USER=bot
 export ROCKETCHAT_PASSWORD=bot
 ```
@@ -92,7 +95,8 @@ By doing: `npm install hubot-rocketchat`
 You will need to tell the adapter where your install is and what login information to use.
 
 ```
-export ROCKETCHAT_ROOM=GENERAL
+export ROCKETCHAT_ROOM=''
+export LISTEN_ON_ALL_PUBLIC=true
 export ROCKETCHAT_USER=bot
 export ROCKETCHAT_PASSWORD=bot
 ```
@@ -113,14 +117,22 @@ ROCKETCHAT_URL | the IP and port where Rocket.Chat is running
 ROCKETCHAT_USER | the bot user's name
 ROCKETCHAT_PASSWORD | the bot user's password
 ROCKETCHAT_ROOM | the channel/channels names the bot should listen to message from.  This can be comma separated list.
-LISTEN_ON_ALL_PUBLIC | if 'true' then bot will listen and respond to messages from all public channels, as well as respond to direct messages. Default to 'false'. ROCKETCHAT_ROOM should be set to nothing (with `ROCKETCHAT_ROOM=` ) when using `LISTEN_ON_ALL_PUBLIC`.
+LISTEN_ON_ALL_PUBLIC | if 'true' then bot will listen and respond to messages from all public channels, as well as respond to direct messages. Default to 'false'. ROCKETCHAT_ROOM should be set to empty (with `ROCKETCHAT_ROOM=''` ) when using `LISTEN_ON_ALL_PUBLIC`. *IMPORTANT NOTE*:  This option also allows the bot to listen and respond to messages _from all newly created private groups_ that the bot's user has been added as a member.
 RESPOND_TO_DM | if 'true' then bot will listen and respond to direct messages. When setting the option to 'true', be sure to also set ROCKETCHAT_ROOM. This option needs not be set if you are including LISTEN_ON_ALL_PUBLIC.    Default is 'false'.
 BOT_NAME | ** Name of the bot.  This is what it responds to
 EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot.
 DEV | ** This enables development mode.
 
 ** - Docker image only.
+##### Configuring the Bot to listen and respond to all new public channels and private groups
 
+This is a very common configuration for Rocket.Chat bot installations.
+
+Use the following options:
+
+`LISTEN_ON_ALL_PUBLIC=true`  and `ROCKETCHAT_ROOM=''`  and *do not* specify `RESPOND_TO_DM`
+
+Be aware you *must* add the bot's user as a member of the new private group(s) before it will respond.
 
 ### Verify your bot is working
 Try:
@@ -157,7 +169,8 @@ Now we start the docker container.
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM=GENERAL \
+	-e ROCKETCHAT_ROOM='' \
+	-e LISTEN_ON_ALL_PUBLIC=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e BOT_NAME=bot \
