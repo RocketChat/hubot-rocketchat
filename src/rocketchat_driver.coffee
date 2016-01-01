@@ -58,13 +58,14 @@ class RocketChatDriver
 		rQ.on "change", (id) =>
 			# awkward syntax due to asteroid limitations
 			# - it ain't no minimongo cursor
-			@logger.info "Change received on ID " + id
+			# @logger.info "Change received on ID " + id
 			changedMsgQuery = @messages.reactiveQuery {"_id": id}
 			if changedMsgQuery.result && changedMsgQuery.result.length > 0
 				# console.log('result:', JSON.stringify(changedMsgQuery.result, null, 2))
 				changedMsg = changedMsgQuery.result[0]
 				# console.log('changed:', JSON.stringify(changedMsg, null, 2));
 				if changedMsg.args?
+					@logger.info "Message received with ID " + id
 					receiveMessageCallback changedMsg.args[1]
 
 	callMethod: (name, args = []) =>
