@@ -17,7 +17,7 @@ class RocketChatDriver
 			cb()
 
 	getRoomId: (roomid) =>
-		@logger.info "Joining Room: #{roomid}"
+		@logger.info "Looking up Room ID for: #{roomid}"
 
 		r = @asteroid.call 'getRoomIdByNameOrId', roomid
 
