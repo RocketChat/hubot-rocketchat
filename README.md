@@ -124,9 +124,9 @@ EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot.
 DEV | ** This enables development mode.
 
 ** - Docker image only.
-##### Configuring the Bot to listen and respond to all new public channels and private groups
+##### Configuring the Bot to listen and respond to direct messages plus all new public channels and private groups
 
-This is a very common configuration for Rocket.Chat bot installations.
+This is a common configuration for Rocket.Chat bot installations.
 
 Use the following options:
 
