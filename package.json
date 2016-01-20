@@ -1,24 +1,20 @@
 {
   "name": "hubot-rocketchat",
-  "version":  "0.0.25",
+  "version": "0.0.26",
   "author": {
     "name": "Rocket.Chat",
     "url": "http://rocket.chat/"
   },
-  "contributors": [
-    {
-      "name": "Sing Li",
-      "email": "sing.li@rocket.chat"
-    },
-    {
-      "name": "Gabriel Engel",
-      "email": "gabriel.engel@rocket.chat"
-    },
-    {
-      "name": "Aaron Ogle",
-      "email": "aaron.olge@rocket.chat"
-    }
-  ],
+  "contributors": [{
+    "name": "Sing Li",
+    "email": "sing.li@rocket.chat"
+  }, {
+    "name": "Gabriel Engel",
+    "email": "gabriel.engel@rocket.chat"
+  }, {
+    "name": "Aaron Ogle",
+    "email": "aaron.olge@rocket.chat"
+  }],
   "description": "Hubot Rocket.Chat Adapter",
   "keywords": [
     "hubot",
