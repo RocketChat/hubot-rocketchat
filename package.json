@@ -3,6 +3,7 @@
   "version":  "0.0.25",
   "author": {
     "name": "Rocket.Chat",
+    "email": "support@rocket.chat",
     "url": "http://rocket.chat/"
   },
   "contributors": [

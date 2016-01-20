@@ -17,7 +17,8 @@ class RocketChatDriver
 		else
 			sslenable = false
 
-		@asteroid = new Asteroid(url, sslenable)
+		# @asteroid = new Asteroid(url, sslenable)
+		@asteroid = new Asteroid({endpoint: "ws://"+url+"/websocket"})
 
 		@asteroid.on 'connected', ->
 			cb()
