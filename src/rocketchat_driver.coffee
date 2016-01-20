@@ -10,8 +10,13 @@ _messageCollection = 'stream-messages'
 # plugs into generic rocketchatbotadapter
 
 class RocketChatDriver
-	constructor: (url, @logger, cb) ->
-		@asteroid = new Asteroid(url)
+	constructor: (url, ssl, @logger, cb) ->
+		if ssl is  'true'
+			sslenable = true
+		else
+			sslenable = false
+
+		@asteroid = new Asteroid(url, sslenable)
 
 		@asteroid.on 'connected', ->
 			cb()
