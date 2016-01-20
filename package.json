@@ -48,6 +48,7 @@
   "main": "./src/rocketchat",
   "dependencies": {
     "asteroid": "git://github.com/mondora/asteroid.git#1.0.0-rewrite",
+    "faye-websocket": "^0.10.0",
     "parent-require": "^1.0.0",
     "q": "^1.4.1"
   }

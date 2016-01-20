@@ -1,5 +1,7 @@
 Asteroid = require 'asteroid'
-Asteroid = Asteroid.createClass()
+Asteroid = Asteroid.createClass([])
+
+WebSocket = require("faye-websocket");
 
 # TODO:   need to grab these values from process.env[]
 
@@ -13,12 +15,11 @@ _messageCollection = 'stream-messages'
 class RocketChatDriver
 	constructor: (url, ssl, @logger, cb) ->
 		if ssl is  'true'
-			sslenable = true
+			protocol = 'wss'
 		else
-			sslenable = false
+			protocol = 'ws'
 
-		# @asteroid = new Asteroid(url, sslenable)
-		@asteroid = new Asteroid({endpoint: "ws://"+url+"/websocket"})
+		@asteroid = new Asteroid({endpoint: "#{protocol}://#{url}/websocket", SocketConstructor: WebSocket.Client})
 
 		@asteroid.on 'connected', ->
 			cb()
@@ -45,7 +46,7 @@ class RocketChatDriver
 	login: (username, password) =>
 		@logger.info "Logging In"
 		# promise returned
-		return @asteroid.loginWithPassword username, password
+		return @asteroid.loginWithPassword username: username, password: password
 
 	prepMeteorSubscriptions: (data) =>
 		# use data to cater for param differences - until we learn more
