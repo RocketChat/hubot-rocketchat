@@ -43,7 +43,13 @@ class RocketChatDriver
 	login: (username, password) =>
 		@logger.info "Logging In"
 		# promise returned
-		return @asteroid.loginWithPassword username, password
+		if process.env.ROCKETCHAT_AUTH is 'ldap'
+			return @asteroid.login
+				username: username
+				ldapPass: password
+				ldapOptions: {}
+		else
+			return @asteroid.loginWithPassword username, password
 
 	prepMeteorSubscriptions: (data) =>
 		# use data to cater for param differences - until we learn more

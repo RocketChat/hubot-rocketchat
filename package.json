@@ -8,15 +8,15 @@
   "contributors": [
     {
       "name": "Sing Li",
-      "email": "sli@makawave.com"
+      "email": "sing.li@rocket.chat"
     },
     {
       "name": "Gabriel Engel",
-      "email": "gabriel.engel@gmail.com"
+      "email": "gabriel.engel@rocket.chat"
     },
     {
       "name": "Aaron Ogle",
-      "email": "aaron@geekgonecrazy.com"
+      "email": "aaron.olge@rocket.chat"
     }
   ],
   "description": "Hubot Rocket.Chat Adapter",
@@ -27,12 +27,7 @@
     "rocket",
     "chat"
   ],
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://opensource.org/licenses/mit-license.php"
-    }
-  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/RocketChat/hubot-rocketchat.git"
@@ -46,7 +41,7 @@
   },
   "main": "./src/rocketchat",
   "dependencies": {
-    "asteroid": "^0.6.1",
+    "asteroid": "git://github.com/RocketChat/asteroid.git",
     "parent-require": "^1.0.0",
     "q": "^1.4.1"
   }
