@@ -113,7 +113,7 @@ Regular hubot via: `export VAR=Value` or add to pm2 etc
 
 Environment Variable | Description
 :---- | :----
-ROCKETCHAT_URL | the IP and port where Rocket.Chat is running
+ROCKETCHAT_URL | the URL where Rocket.Chat is running, can be specified as `host:port`  or `http://host:port`  or `https://host:port` 
 ROCKETCHAT_USER | the bot user's name
 ROCKETCHAT_PASSWORD | the bot user's password
 ROCKETCHAT_ROOM | the channel/channels names the bot should listen to message from.  This can be comma separated list.

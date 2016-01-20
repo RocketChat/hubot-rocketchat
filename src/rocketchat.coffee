@@ -12,6 +12,7 @@ RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
 RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
 ListenOnAllPublicRooms = process.env.LISTEN_ON_ALL_PUBLIC or "false"
 RespondToDirectMessage = process.env.RESPOND_TO_DM or "false"
+SSLEnabled = "false"
 class RocketChatBotAdapter extends Adapter
 
 	run: =>
@@ -24,6 +25,15 @@ class RocketChatBotAdapter extends Adapter
 		@robot.logger.warning "No services ROCKETCHAT_USER provided to Hubot, using #{RocketChatUser}" unless process.env.ROCKETCHAT_USER
 		return @robot.logger.error "No services ROCKETCHAT_PASSWORD provided to Hubot" unless RocketChatPassword
 
+
+		if RocketChatURL.toLowerCase().substring(0,7) == "http://"
+			RocketChatURL = RocketChatURL.substring(7)
+
+		if RocketChatURL.toLowerCase().substring(0,8) == "https://"
+			RocketChatURL = RocketChatURL.substring(8)
+			SSLEnabled = "true"
+
+
 		@lastts = new Date()
 
 		@robot.logger.info "Connecting To: #{RocketChatURL}"
@@ -31,7 +41,7 @@ class RocketChatBotAdapter extends Adapter
 		room_ids = null
 		userid = null
 
-		@chatdriver = new Chatdriver RocketChatURL, @robot.logger, =>
+		@chatdriver = new Chatdriver RocketChatURL, SSLEnabled, @robot.logger, =>
 			@robot.logger.info "Successfully connected!"
 			@robot.logger.info RocketChatRoom
 
