@@ -1,4 +1,5 @@
 Asteroid = require 'asteroid'
+Asteroid = Asteroid.createClass()
 
 # TODO:   need to grab these values from process.env[]
 
