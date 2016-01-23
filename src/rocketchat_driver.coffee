@@ -39,6 +39,11 @@ class RocketChatDriver
 		@logger.info "Sending Message To Room: #{roomid}"
 
 		@asteroid.call('sendMessage', {msg: text, rid: roomid})
+		
+	customMessage: (message) =>
+		@logger.info "Sending Custom Message To Room: #{message.channel}"
+
+		@asteroid.call('sendMessage', {msg: "", rid: message.channel, attachments: message.attachments, bot: true, groupable: false})
 
 	login: (username, password) =>
 		@logger.info "Logging In"

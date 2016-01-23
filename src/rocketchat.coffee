@@ -136,12 +136,15 @@ class RocketChatBotAdapter extends Adapter
 			)
 
 	send: (envelope, strings...) =>
-			@chatdriver.sendMessage(str, envelope.room) for str in strings
+		@chatdriver.sendMessage(str, envelope.room) for str in strings
+			
+	customMessage: (data) =>
+		@chatdriver.customMessage(data)
 
 	reply: (envelope, strings...) =>
-			@robot.logger.info "reply"
-			strings = strings.map (s) -> "@#{envelope.user.name} #{s}"
-			@send envelope, strings...
+		@robot.logger.info "reply"
+		strings = strings.map (s) -> "@#{envelope.user.name} #{s}"
+		@send envelope, strings...
 
 	callMethod: (method, args...) =>
 		@chatdriver.callMethod(method, args)
