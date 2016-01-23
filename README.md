@@ -29,7 +29,7 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 	-e LISTEN_ON_ALL_PUBLIC=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
-	-e ROCKETCHAT_AUTH=ldap \
+	-e ROCKETCHAT_AUTH=password \
 	-e BOT_NAME=bot \
 	-e EXTERNAL_SCRIPTS=hubot-pugme,hubot-help \
 	rocketchat/hubot-rocketchat
