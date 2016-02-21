@@ -39,6 +39,7 @@
   "dependencies": {
     "asteroid": "git://github.com/RocketChat/asteroid.git",
     "parent-require": "^1.0.0",
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "lru-cache": "~4.0.0"
   }
 }

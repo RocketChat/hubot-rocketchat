@@ -1,10 +1,17 @@
 Asteroid = require 'asteroid'
+Q = require 'q'
+LRU = require('lru-cache')
 
 # TODO:   need to grab these values from process.env[]
 
 _msgsubtopic = 'stream-messages' # 'messages'
 _msgsublimit = 10   # this is not actually used right now
 _messageCollection = 'stream-messages'
+
+# room id cache
+_cacheSize = parseInt(process.env.ROOM_ID_CACHE_SIZE) || 10
+_cacheMaxAge = parseInt(process.env.ROOM_ID_CACHE_MAX_AGE) || 300
+_roomIdCache = LRU( max: _cacheSize, maxAge: 1000 * _cacheMaxAge )
 
 # driver specific to Rocketchat hubot integration
 # plugs into generic rocketchatbotadapter
@@ -21,12 +28,17 @@ class RocketChatDriver
 		@asteroid.on 'connected', ->
 			cb()
 
-	getRoomId: (roomid) =>
-		@logger.info "Looking up Room ID for: #{roomid}"
-
-		r = @asteroid.call 'getRoomIdByNameOrId', roomid
-
-		return r.result
+	getRoomId: (room) =>
+		cached = _roomIdCache.get room
+		if cached
+			@logger.debug "Found cached Room ID for #{room}: #{cached}"
+			return Q(cached)
+		else
+			@logger.info "Looking up Room ID for: #{room}"
+			r = @asteroid.call 'getRoomIdByNameOrId', room
+			return r.result.then (roomid) =>
+				_roomIdCache.set room, roomid
+				return Q(roomid)
 
 	joinRoom: (userid, uname, roomid, cb) =>
 		@logger.info "Joining Room: #{roomid}"
@@ -35,11 +47,12 @@ class RocketChatDriver
 
 		return r.updated
 
-	sendMessage: (text, roomid) =>
-		@logger.info "Sending Message To Room: #{roomid}"
+	sendMessage: (text, room) =>
+		@logger.info "Sending Message To Room: #{room}"
+		r = @getRoomId room
+		r.then (roomid) =>
+			@asteroid.call('sendMessage', {msg: text, rid: roomid})
 
-		@asteroid.call('sendMessage', {msg: text, rid: roomid})
-		
 	customMessage: (message) =>
 		@logger.info "Sending Custom Message To Room: #{message.channel}"
 
