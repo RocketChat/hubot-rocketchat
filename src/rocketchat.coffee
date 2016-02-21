@@ -157,6 +157,9 @@ class RocketChatBotAdapter extends Adapter
 			envelope.room = chan.rid
 			@send envelope, strings...
 		)
+		.catch((err) =>
+			@robot.logger.error "Unable to get DirectMessage Room ID: #{JSON.stringify(err)} Reason: #{err.reason}"
+		)
 
 	reply: (envelope, strings...) =>
 		@robot.logger.info "reply"
