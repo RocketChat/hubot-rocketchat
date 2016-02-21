@@ -155,7 +155,7 @@ class RocketChatBotAdapter extends Adapter
 		Q(channel)
 		.then((chan) =>
 			envelope.room = chan.rid
-			@send envelope, strings...
+			@chatdriver.sendMessageByRoomId(str, envelope.room) for str in strings
 		)
 		.catch((err) =>
 			@robot.logger.error "Unable to get DirectMessage Room ID: #{JSON.stringify(err)} Reason: #{err.reason}"
