@@ -1,8 +1,8 @@
 try
-		{Robot,Adapter,TextMessage, EnterMessage, User} = require 'hubot'
+		{Robot,Adapter,TextMessage, EnterMessage, User, Response} = require 'hubot'
 catch
 		prequire = require('parent-require')
-		{Robot,Adapter,TextMessage, EnterMessage, User} = prequire 'hubot'
+		{Robot,Adapter,TextMessage, EnterMessage, User, Response} = prequire 'hubot'
 Q = require 'q'
 Chatdriver = require './rocketchat_driver'
 
@@ -13,6 +13,14 @@ RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
 ListenOnAllPublicRooms = process.env.LISTEN_ON_ALL_PUBLIC or "false"
 RespondToDirectMessage = process.env.RESPOND_TO_DM or "false"
 SSLEnabled = "false"
+
+# Custom Response class that adds a sendPrivate and sendDirect method
+class RocketChatResponse extends Response
+	sendDirect: (strings...) ->
+		@robot.adapter.sendDirect @envelope, strings...
+	sendPrivate: (strings...) ->
+		@robot.adapter.sendDirect @envelope, strings...
+
 class RocketChatBotAdapter extends Adapter
 
 	run: =>
@@ -25,6 +33,7 @@ class RocketChatBotAdapter extends Adapter
 		@robot.logger.warning "No services ROCKETCHAT_USER provided to Hubot, using #{RocketChatUser}" unless process.env.ROCKETCHAT_USER
 		return @robot.logger.error "No services ROCKETCHAT_PASSWORD provided to Hubot" unless RocketChatPassword
 
+		@robot.Response = RocketChatResponse
 
 		if RocketChatURL.toLowerCase().substring(0,7) == "http://"
 			RocketChatURL = RocketChatURL.substring(7)
@@ -140,6 +149,14 @@ class RocketChatBotAdapter extends Adapter
 			
 	customMessage: (data) =>
 		@chatdriver.customMessage(data)
+
+	sendDirect: (envelope, strings...) =>
+		channel = @chatdriver.getDirectMessageRoomId(envelope.user.name)
+		Q(channel)
+		.then((chan) =>
+			envelope.room = chan.rid
+			@send envelope, strings...
+		)
 
 	reply: (envelope, strings...) =>
 		@robot.logger.info "reply"

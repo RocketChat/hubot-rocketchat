@@ -28,6 +28,13 @@ class RocketChatDriver
 
 		return r.result
 
+	getDirectMessageRoomId: (username) =>
+		@logger.info "Looking up DM Room ID for: #{username}"
+
+		r = @asteroid.call 'createDirectMessage', username
+
+		return r.result
+
 	joinRoom: (userid, uname, roomid, cb) =>
 		@logger.info "Joining Room: #{roomid}"
 
