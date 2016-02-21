@@ -7,7 +7,11 @@ LRU = require('lru-cache')
 _msgsubtopic = 'stream-messages' # 'messages'
 _msgsublimit = 10   # this is not actually used right now
 _messageCollection = 'stream-messages'
-_roomIdCache = LRU( max: 10, maxAge: 1000 * 20 )
+
+# room id cache
+_cacheSize = parseInt(process.env.ROOM_ID_CACHE_SIZE) || 10
+_cacheMaxAge = parseInt(process.env.ROOM_ID_CACHE_MAX_AGE) || 300
+_roomIdCache = LRU( max: _cacheSize, maxAge: 1000 * _cacheMaxAge )
 
 # driver specific to Rocketchat hubot integration
 # plugs into generic rocketchatbotadapter
