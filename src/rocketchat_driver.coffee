@@ -31,6 +31,7 @@ class RocketChatDriver
 	getRoomId: (room) =>
 		cached = _roomIdCache.get room
 		if cached
+			@logger.debug "Found cached Room ID for #{room}: #{cached}"
 			return Q(cached)
 		else
 			@logger.info "Looking up Room ID for: #{room}"
