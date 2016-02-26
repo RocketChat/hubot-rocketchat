@@ -1,4 +1,5 @@
 # add documentation here too
+# add something here
 
 try
 		{Robot,Adapter,TextMessage, EnterMessage, User, Response} = require 'hubot'
