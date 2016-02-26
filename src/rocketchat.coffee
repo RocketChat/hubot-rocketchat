@@ -1,5 +1,10 @@
-# add documentation here too
-# add something here
+# Hubot adapter for Rocket.Chat
+# For configuration and deployment details, see https://github.com/RocketChat/hubot-rocketchat/blob/master/README.md
+#
+# The RocketChatBotAdapter class implements 'standard' hubot Adapter interface methods.
+#
+# Most of the Rocket.Chat specific code, tied to Rocket.Chat's real-time messaging APIs, are isolated in
+# a seperate RocketChatDriver class.
 
 try
 		{Robot,Adapter,TextMessage, EnterMessage, User, Response} = require 'hubot'
