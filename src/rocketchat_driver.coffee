@@ -1,3 +1,6 @@
+# Adding some documentation
+# Adding something else
+
 Asteroid = require 'asteroid'
 Q = require 'q'
 LRU = require('lru-cache')
