@@ -1,3 +1,5 @@
+# add documentation here too
+
 try
 		{Robot,Adapter,TextMessage, EnterMessage, User, Response} = require 'hubot'
 catch
@@ -146,7 +148,7 @@ class RocketChatBotAdapter extends Adapter
 
 	send: (envelope, strings...) =>
 		@chatdriver.sendMessage(str, envelope.room) for str in strings
-			
+
 	customMessage: (data) =>
 		@chatdriver.customMessage(data)
 
