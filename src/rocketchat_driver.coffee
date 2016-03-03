@@ -1,6 +1,3 @@
-# Adding some documentation
-# Adding something else
-
 Asteroid = require 'asteroid'
 Q = require 'q'
 LRU = require('lru-cache')
@@ -58,6 +55,9 @@ class RocketChatDriver
 		r = @asteroid.call 'joinRoom', roomid
 
 		return r.updated
+
+	inbandMessage: (room, payload, trigger, triggerUser) =>
+		@asteroid.call('sendMessage', {msg: '', payload: payload, rid: room, t: 'inband', trigger: trigger, triggerUser: triggerUser});
 
 	sendMessage: (text, room) =>
 		@logger.info "Sending Message To Room: #{room}"

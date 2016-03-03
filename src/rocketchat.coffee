@@ -1,11 +1,3 @@
-# Hubot adapter for Rocket.Chat
-# For configuration and deployment details, see https://github.com/RocketChat/hubot-rocketchat/blob/master/README.md
-#
-# The RocketChatBotAdapter class implements 'standard' hubot Adapter interface methods.
-#
-# Most of the Rocket.Chat specific code, tied to Rocket.Chat's real-time messaging APIs, are isolated in
-# a seperate RocketChatDriver class.
-
 try
 		{Robot,Adapter,TextMessage, EnterMessage, User, Response} = require 'hubot'
 catch
@@ -176,6 +168,10 @@ class RocketChatBotAdapter extends Adapter
 
 	callMethod: (method, args...) =>
 		@chatdriver.callMethod(method, args)
+
+	inbandMessage: (room, payload, trigger, triggerUser) =>
+		@robot.logger.info "Sending inband message on channel: #{room} for: #{triggerUser}"
+		@chatdriver.inbandMessage(room, payload, trigger, triggerUser)
 
 exports.use = (robot) ->
 	new RocketChatBotAdapter robot
