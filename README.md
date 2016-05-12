@@ -77,7 +77,7 @@ It'll ask you a few questions.
 Alternatively you can actually answer the questions in one command:
 
 ```
-yo hubot --owner="OWNER <owner@example.com>" --name="TestBot" --description="Test Bot" --adapter="rocketchat"
+yo hubot --owner="OWNER <owner@example.com>" --name="bot" --description="Bot" --adapter="rocketchat"
 ```
 
 Also be sure to remember the name you specify.  This is what the bot will respond to in Rocket.Chat.
