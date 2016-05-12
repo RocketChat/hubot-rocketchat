@@ -67,12 +67,18 @@ npm install -g yo generator-hubot
 Then you need to start the setup of the bot
 
 ```
-% mkdir myhubot
-% cd myhubot
-% yo hubot
+mkdir myhubot
+cd myhubot
+yo hubot --adapter="rocketchat"
 ```
 
-It'll ask you a few questions.  One will ask which adapter.  Put: `rocketchat`
+It'll ask you a few questions.
+
+Alternatively you can actually answer the questions in one command:
+
+```
+yo hubot --owner="OWNER <owner@example.com>" --name="bot" --description="Bot" --adapter="rocketchat"
+```
 
 Also be sure to remember the name you specify.  This is what the bot will respond to in Rocket.Chat.
 
