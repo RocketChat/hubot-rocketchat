@@ -62,7 +62,8 @@ class RocketChatBotAdapter extends Adapter
 			@robot.logger.info "Successfully connected!"
 			@robot.logger.info RocketChatRoom
 
-			rooms = RocketChatRoom.split(',')
+			rooms = RocketChatRoom.split(',').filter (room) ->
+				room != ''
 			# @robot.logger.info JSON.stringify(rooms)
 
 			# Log in
