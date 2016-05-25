@@ -8,6 +8,8 @@
 
 Hubot adapter for Rocket.Chat!
 
+Feel free to join us in the [#hubot](https://demo.rocket.chat/channel/hubot) channel to discuss hubot, and any scripts you might be working on.
+
 #### NOTE
 If you want to integrate Rocket.Chat with GitHub or GitLab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access GitHub/GitLab APIs. You can easily extend these scripts for your custom application.
 
