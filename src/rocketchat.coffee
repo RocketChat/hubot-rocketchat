@@ -37,6 +37,9 @@ class RocketChatBotAdapter extends Adapter
 
 		@robot.logger.info "Once connected to rooms I will respond to the name: #{@robot.name}"
 
+		@robot.alias = RocketChatUser unless @robot.name is RocketChatUser
+		@robot.logger.info "I will also respond to my Rocket.Chat username as an alias: #{ @robot.alias }" unless @robot.alias is false
+
 		@robot.logger.warning "No services ROCKETCHAT_URL provided to Hubot, using #{RocketChatURL}" unless process.env.ROCKETCHAT_URL
 		@robot.logger.warning "No services ROCKETCHAT_ROOM provided to Hubot, using #{RocketChatRoom}" unless process.env.ROCKETCHAT_ROOM
 		@robot.logger.warning "No services ROCKETCHAT_USER provided to Hubot, using #{RocketChatUser}" unless process.env.ROCKETCHAT_USER
