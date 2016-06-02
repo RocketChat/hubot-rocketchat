@@ -126,7 +126,7 @@ Regular hubot via: `export VAR=Value` or add to pm2 etc
 Environment Variable | Description
 :---- | :----
 ROCKETCHAT_URL | the URL where Rocket.Chat is running, can be specified as `host:port` or `http://host:port`  or `https://host:port`. If you are using `https://`, you **MUST** setup websocket pass-through on your reverse proxy (NGINX, and so on) with a valid certificate (not self-signed).  Directly accessing Rocket.Chat without a reverse proxy via `https://` is not possible.
-ROCKETCHAT_USER | the bot user's name
+ROCKETCHAT_USER | the bot user's name. It must be a registered user on your Rocket.Chat server, and the user must be granted `bot` role via Rocket.Chat's administrator's panel  (note that this will also be the name that you can summon the bot with)
 ROCKETCHAT_PASSWORD | the bot user's password
 ROCKETCHAT_AUTH | defaults to 'password' if undefinied, or set to 'ldap' if your use LDAP accounts for bots.
 ROCKETCHAT_ROOM | the channel/channels names the bot should listen to message from.  This can be comma separated list.
