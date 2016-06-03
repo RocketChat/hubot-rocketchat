@@ -138,7 +138,6 @@ DM_ROOM_ID_CACHE_SIZE | The maximum number of Direct Message room IDs to cache. 
 ROOM_ID_CACHE_MAX_AGE | Room IDs and DM Room IDS are cached for this number of seconds. You can increase this value to improve performance in certain scenarios. Default value: 300
 BOT_NAME | ** Name of the bot.  This is what it responds to
 EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot.
-DEV | ** This enables development mode.
 
 ** - Docker image only.
 ##### Configuring the Bot to listen and respond to direct messages plus all new public channels and private groups
@@ -193,7 +192,6 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 	-e ROCKETCHAT_AUTH=password \
 	-e BOT_NAME=bot \
 	-e EXTERNAL_SCRIPTS=hubot-pugme,hubot-help \
-	-e DEV=true \
 	-v $PWD:/home/hubot/node_modules/hubot-rocketchat rocketchat/hubot-rocketchat
 ```
 
