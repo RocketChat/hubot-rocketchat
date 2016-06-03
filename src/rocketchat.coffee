@@ -36,6 +36,8 @@ class RocketChatBotAdapter extends Adapter
 		@robot.logger.info "Starting Rocketchat adapter..."
 
 		@robot.logger.info "Once connected to rooms I will respond to the name: #{@robot.name}"
+		@robot.alias = RocketChatUser unless @robot.name is RocketChatUser || @robot.alias
+		@robot.logger.info "I will also respond to my Rocket.Chat username as an alias: #{ @robot.alias }" unless @robot.alias is false
 
 		@robot.logger.warning "No services ROCKETCHAT_URL provided to Hubot, using #{RocketChatURL}" unless process.env.ROCKETCHAT_URL
 		@robot.logger.warning "No services ROCKETCHAT_ROOM provided to Hubot, using #{RocketChatRoom}" unless process.env.ROCKETCHAT_ROOM
@@ -140,8 +142,13 @@ class RocketChatBotAdapter extends Adapter
 								@lastts = curts
 								if newmsg.t isnt 'uj'
 									user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-									text = new TextMessage(user, newmsg.msg, newmsg._id)
-									@robot.receive text
+									message = new TextMessage(user, newmsg.msg, newmsg._id)
+									isDM = newmsg.rid.indexOf(userid) > -1
+									startOfText = if message.text.indexOf('@') == 0 then 1 else 0
+									robotIsNamed = message.text.indexOf(@robot.name) == startOfText || message.text.indexOf(@robot.alias) == startOfText
+									if (isDM and not robotIsNamed)
+										message.text = "#{ @robot.name } #{ message.text }"
+									@robot.receive message
 									@robot.logger.info "Message sent to hubot brain."
 								else	 # enter room message
 									if newmsg.u._id isnt userid
