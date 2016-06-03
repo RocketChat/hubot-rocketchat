@@ -7,7 +7,8 @@ node_js:
 before_install:
 - npm install -g npm@'>=2.13.5'
 after_deploy:
-- "curl -H \"Content-Type: application/json\" --data \"{'build': true}\" -X POST https://registry.hub.docker.com/u/rocketchat/hubot-rocketchat/trigger/$PUSHTOKEN/" 
+- if [[ $TRAVIS_TAG ]]; then CURL_DATA='{"source_type":"Tag","source_name":"'"$TRAVIS_TAG"'"}'; else CURL_DATA='{"source_type":"Branch","source_name":"develop"}'; fi
+- "curl -H \"Content-Type: application/json\" --data \"$CURL_DATA\" -X POST https://registry.hub.docker.com/u/rocketchat/hubot-rocketchat/trigger/$PUSHTOKEN/" 
 deploy:
   provider: npm
   email: buildmaster@rocket.chat
