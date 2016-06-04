@@ -33,6 +33,9 @@ class RocketChatDriver
 		@asteroid.on 'connected', ->
 			cb()
 
+		@asteroid.on 'reconnected', ->
+			cb()
+
 	getRoomId: (room) =>
 		@tryCache _roomIdCache, 'getRoomIdByNameOrId', room, 'Room ID'
 
