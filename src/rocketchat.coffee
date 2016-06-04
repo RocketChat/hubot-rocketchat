@@ -11,6 +11,7 @@ try
 catch
 		prequire = require('parent-require')
 		{Robot,Adapter,TextMessage, EnterMessage, User, Response} = prequire 'hubot'
+pkg = require '../package.json'
 Q = require 'q'
 Chatdriver = require './rocketchat_driver'
 
@@ -33,7 +34,7 @@ class RocketChatResponse extends Response
 class RocketChatBotAdapter extends Adapter
 
 	run: =>
-		@robot.logger.info "Starting Rocketchat adapter..."
+		@robot.logger.info "Starting Rocketchat adapter version #{pkg.version}..."
 
 		@robot.logger.info "Once connected to rooms I will respond to the name: #{@robot.name}"
 		@robot.alias = RocketChatUser unless @robot.name is RocketChatUser || @robot.alias
