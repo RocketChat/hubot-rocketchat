@@ -71,7 +71,7 @@ Then you need to start the setup of the bot
 ```
 mkdir myhubot
 cd myhubot
-yo hubot --adapter="rocketchat"
+yo hubot --adapter="rocketchat@0.1"
 ```
 
 It'll ask you a few questions.
@@ -79,7 +79,7 @@ It'll ask you a few questions.
 Alternatively you can actually answer the questions in one command:
 
 ```
-yo hubot --owner="OWNER <owner@example.com>" --name="bot" --description="Bot" --adapter="rocketchat"
+yo hubot --owner="OWNER <owner@example.com>" --name="bot" --description="Bot" --adapter="rocketchat@0.1"
 ```
 
 Also be sure to remember the name you specify.  This is what the bot will respond to in Rocket.Chat.
@@ -101,7 +101,7 @@ Then start with: `bin/hubot -a rocketchat`
 #### Existing install
 If you already have hubot setup you can add the adapter.
 
-By doing: `npm install hubot-rocketchat`
+By doing: `npm install hubot-rocketchat@0.1`
 
 You will need to tell the adapter where your install is and what login information to use.
 
