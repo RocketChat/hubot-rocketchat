@@ -24,6 +24,9 @@ RespondToDirectMessage = process.env.RESPOND_TO_DM or "false"
 RespondToEditedMessage = (process.env.RESPOND_TO_EDITED or "false").toLowerCase()
 SSLEnabled = "false"
 
+if ListenOnAllPublicRooms.toLowerCase() is 'true'
+	RocketChatRoom = ''
+
 # Custom Response class that adds a sendPrivate and sendDirect method
 class RocketChatResponse extends Response
 	sendDirect: (strings...) ->
@@ -111,6 +114,10 @@ class RocketChatBotAdapter extends Adapter
 			)
 			# Subscribe to msgs in all rooms
 			.then((res) =>
+				if ListenOnAllPublicRooms.toLowerCase() is 'true'
+					res = [0]
+					rooms = ['__my_messages__']
+
 				@robot.logger.info "All rooms joined."
 				subs = []
 				for result, idx in res
