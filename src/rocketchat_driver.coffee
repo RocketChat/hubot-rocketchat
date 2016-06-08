@@ -117,7 +117,7 @@ class RocketChatDriver
 				# console.log('changed:', JSON.stringify(changedMsg, null, 2));
 				if changedMsg.args?
 					@logger.info "Message received with ID " + id
-					receiveMessageCallback changedMsg.args[0]
+					receiveMessageCallback changedMsg.args[0], changedMsg.args[1]
 
 	callMethod: (name, args = []) =>
 		@logger.info "Calling: #{name}, #{args.join(', ')}"
