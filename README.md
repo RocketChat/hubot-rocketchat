@@ -62,7 +62,7 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 
 ### Docker-compose
 
-If you want to use docker-compose for this task, use this for v0.1.4 adapter (this must be inserted in your docker-compose.yml):
+If you want to use docker-compose for this task, add this for v0.1.4 adapter (this must be inserted in your docker-compose.yml):
 
 ```
 # hubot, the popular chatbot (add the bot user first and change the password before starting this image)
@@ -79,7 +79,7 @@ hubot:
 # you can add more scripts as you'd like here, they need to be installable by npm
     - EXTERNAL_SCRIPTS=hubot-help,hubot-seen,hubot-links,hubot-diagnostics,hubot-google,hubot-reddit,hubot-bofh,hubot-bookmark,hubot-shipit,hubot-maps
   links:
-    - rocketchat:rocketchat_rocketchat_1
+    - rocketchat:rocketchat_rocketchat
 # this is used to expose the hubot port for notifications on the host on port 3001, e.g. for hubot-jenkins-notifier
   ports:
     - 3001:8080
