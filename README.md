@@ -79,7 +79,7 @@ hubot:
 # you can add more scripts as you'd like here, they need to be installable by npm
     - EXTERNAL_SCRIPTS=hubot-help,hubot-seen,hubot-links,hubot-diagnostics,hubot-google,hubot-reddit,hubot-bofh,hubot-bookmark,hubot-shipit,hubot-maps
   links:
-    - rocketchat:rocketchat_rocketchat
+    - rocketchat:rocketchat
 # this is used to expose the hubot port for notifications on the host on port 3001, e.g. for hubot-jenkins-notifier
   ports:
     - 3001:8080
