@@ -60,6 +60,34 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 	rocketchat/hubot-rocketchat
 ```
 
+### Docker-compose
+
+If you want to use docker-compose for this task, add this for v0.1.4 adapter (this must be inserted in your docker-compose.yml):
+
+```
+# hubot, the popular chatbot (add the bot user first and change the password before starting this image)
+hubot:
+  image: rocketchat/hubot-rocketchat:v0.1.4
+  environment:
+    - ROCKETCHAT_URL=your-rocket-chat-instance-ip:3000 (e.g. 192.168.2.240:3000)
+    - ROCKETCHAT_ROOM=
+    - LISTEN_ON_ALL_PUBLIC=true
+    - ROCKETCHAT_USER=username-of-your-bot
+    - ROCKETCHAT_PASSWORD=yourpass
+    - BOT_NAME=bot
+    - GOOGLE_API_KEY=yourgoogleapikey
+# you can add more scripts as you'd like here, they need to be installable by npm
+    - EXTERNAL_SCRIPTS=hubot-help,hubot-seen,hubot-links,hubot-diagnostics,hubot-google,hubot-reddit,hubot-bofh,hubot-bookmark,hubot-shipit,hubot-maps
+  links:
+    - rocketchat:rocketchat
+# this is used to expose the hubot port for notifications on the host on port 3001, e.g. for hubot-jenkins-notifier
+  ports:
+    - 3001:8080
+```
+
+ If you wish that your bot listen to all public rooms and all private rooms he is joined to let the env "ROCKETCHAT_ROOM" empty like in the example above and set the env "LISTEN_ON_ALL_PUBLIC" to true.
+ 
+ Please take attention to some external scripts that are in the example above, some of them need your Google-API-Key in the docker compose file.
 
 ### Add adapter to hubot
 
