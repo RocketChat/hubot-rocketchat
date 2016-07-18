@@ -7,9 +7,9 @@ LRU = require('lru-cache')
 
 # TODO:   need to grab these values from process.env[]
 
-_msgsubtopic = 'stream-messages' # 'messages'
+_msgsubtopic = 'stream-room-messages' # 'messages'
 _msgsublimit = 10   # this is not actually used right now
-_messageCollection = 'stream-messages'
+_messageCollection = 'stream-room-messages'
 
 # room id cache
 _roomCacheSize = parseInt(process.env.ROOM_ID_CACHE_SIZE) || 10
@@ -97,7 +97,7 @@ class RocketChatDriver
 		#  data.roomid
 		# return promise
 		@logger.info "Preparing Meteor Subscriptions.."
-		msgsub = @asteroid.subscribe _msgsubtopic, data.roomid, _msgsublimit
+		msgsub = @asteroid.subscribe _msgsubtopic, data.roomid, true
 		@logger.info "Subscribing to Room: #{data.roomid}"
 		return msgsub.ready
 
@@ -117,7 +117,7 @@ class RocketChatDriver
 				# console.log('changed:', JSON.stringify(changedMsg, null, 2));
 				if changedMsg.args?
 					@logger.info "Message received with ID " + id
-					receiveMessageCallback changedMsg.args[1]
+					receiveMessageCallback changedMsg.args[0], changedMsg.args[1]
 
 	callMethod: (name, args = []) =>
 		@logger.info "Calling: #{name}, #{args.join(', ')}"
