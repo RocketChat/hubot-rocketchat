@@ -31,6 +31,10 @@ class RocketChatResponse extends Response
 	sendPrivate: (strings...) ->
 		@robot.adapter.sendDirect @envelope, strings...
 
+class AttachmentMessage extends TextMessage
+	constructor: (@user, @attachment, @text, @id) ->
+		super @user, @text, @id
+
 class RocketChatBotAdapter extends Adapter
 
 	run: =>
@@ -137,13 +141,31 @@ class RocketChatBotAdapter extends Adapter
 								edited = new Date(newmsg.editedAt.$date)
 								curts = if edited > curts then edited else curts
 							@robot.logger.info "Message receive callback id " + newmsg._id + " ts " + curts
-							@robot.logger.info "[Incoming] #{newmsg.u.username}: #{newmsg.msg}"
+							@robot.logger.info "[Incoming] #{newmsg.u.username}: #{if newmsg.file? then newmsg.attachments[0].title else newmsg.msg}"
 
 							if curts > @lastts
 								@lastts = curts
 								if newmsg.t isnt 'uj'
 									user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-									message = new TextMessage(user, newmsg.msg, newmsg._id)
+
+									# check for the presence of attachments in the message
+									if newmsg.file? and newmsg.attachments.length
+										attachment = newmsg.attachments[0]
+
+										if attachment.image_url?
+											attachment.link = "#{RocketChatURL}#{attachment.image_url}"
+											attachment.type = 'image'
+										else if attachment.audio_url?
+											attachment.link = "#{RocketChatURL}#{attachment.audio_url}"
+											attachment.type = 'audio'
+										else if attachment.video_url?
+											attachment.link = "#{RocketChatURL}#{attachment.video_url}"
+											attachment.type = 'video'
+
+										message = new AttachmentMessage user, attachment, attachment.title, newmsg._id
+									else
+										message = new TextMessage user, newmsg.msg, newmsg._id
+
 									isDM = newmsg.rid.indexOf(userid) > -1
 									startOfText = if message.text.indexOf('@') == 0 then 1 else 0
 									robotIsNamed = message.text.indexOf(@robot.name) == startOfText || message.text.indexOf(@robot.alias) == startOfText
