@@ -190,7 +190,9 @@ class RocketChatBotAdapter extends Adapter
 
 	reply: (envelope, strings...) =>
 		@robot.logger.info "reply"
-		strings = strings.map (s) -> "@#{envelope.user.name} #{s}"
+		isDM = envelope.room.indexOf(envelope.user.id) > -1
+		unless isDM
+			strings = strings.map (s) -> "@#{envelope.user.name} #{s}"
 		@send envelope, strings...
 
 	callMethod: (method, args...) =>
