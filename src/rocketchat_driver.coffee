@@ -62,14 +62,24 @@ class RocketChatDriver
 
 		return r.updated
 
-	sendMessage: (text, room) =>
+	prepareMessage: (content, roomid) =>
+		@logger.debug "Preparing message from #{ typeof content }"
+		if typeof content is 'string'
+			message = {msg: content, rid: roomid}
+		else
+			message = content
+			message.rid = roomid
+		return message
+
+	sendMessage: (message, room) =>
 		@logger.info "Sending Message To Room: #{room}"
 		r = @getRoomId room
 		r.then (roomid) =>
-			@sendMessageByRoomId text, roomid
+			@sendMessageByRoomId message, roomid
 
-	sendMessageByRoomId: (text, roomid) =>
-		@asteroid.call('sendMessage', {msg: text, rid: roomid})
+	sendMessageByRoomId: (content, roomid) =>
+		message = @prepareMessage content, roomid
+		@asteroid.call('sendMessage', message)
 		.then (result)->
 			@logger.debug('[sendMessage] Success:', result)
 		.catch (error) ->
