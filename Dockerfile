@@ -1,5 +1,5 @@
 FROM node:0.12.4
-MAINTAINER Sing Li <sli@makawave.com>
+MAINTAINER Rocket.Chat Team <buildmaster@rocket.chat>
 
 RUN npm install -g coffee-script yo generator-hubot  &&  \
 	useradd hubot -m

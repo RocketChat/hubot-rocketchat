@@ -10,6 +10,12 @@ Hubot adapter for Rocket.Chat!
 
 Feel free to join us in the [#hubot](https://demo.rocket.chat/channel/hubot) channel to discuss hubot, and any scripts you might be working on.
 
+## Important
+
+v1.0.x of the adapter introduces breaking changes.  It is only compatible with v0.37.0 and higher of Rocket.Chat Server.
+
+If you are using an older version of Rocket.Chat please use v0.1.4 of the adapter.
+
 #### NOTE
 If you want to integrate Rocket.Chat with GitHub or GitLab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access GitHub/GitLab APIs. You can easily extend these scripts for your custom application.
 
@@ -54,6 +60,34 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 	rocketchat/hubot-rocketchat
 ```
 
+### Docker-compose
+
+If you want to use docker-compose for this task, add this for v0.1.4 adapter (this must be inserted in your docker-compose.yml):
+
+```
+# hubot, the popular chatbot (add the bot user first and change the password before starting this image)
+hubot:
+  image: rocketchat/hubot-rocketchat:v0.1.4
+  environment:
+    - ROCKETCHAT_URL=your-rocket-chat-instance-ip:3000 (e.g. 192.168.2.240:3000)
+    - ROCKETCHAT_ROOM=
+    - LISTEN_ON_ALL_PUBLIC=true
+    - ROCKETCHAT_USER=username-of-your-bot
+    - ROCKETCHAT_PASSWORD=yourpass
+    - BOT_NAME=bot
+    - GOOGLE_API_KEY=yourgoogleapikey
+# you can add more scripts as you'd like here, they need to be installable by npm
+    - EXTERNAL_SCRIPTS=hubot-help,hubot-seen,hubot-links,hubot-diagnostics,hubot-google,hubot-reddit,hubot-bofh,hubot-bookmark,hubot-shipit,hubot-maps
+  links:
+    - rocketchat:rocketchat
+# this is used to expose the hubot port for notifications on the host on port 3001, e.g. for hubot-jenkins-notifier
+  ports:
+    - 3001:8080
+```
+
+ If you wish that your bot listen to all public rooms and all private rooms he is joined to let the env "ROCKETCHAT_ROOM" empty like in the example above and set the env "LISTEN_ON_ALL_PUBLIC" to true.
+ 
+ Please take attention to some external scripts that are in the example above, some of them need your Google-API-Key in the docker compose file.
 
 ### Add adapter to hubot
 
@@ -71,7 +105,7 @@ Then you need to start the setup of the bot
 ```
 mkdir myhubot
 cd myhubot
-yo hubot --adapter="rocketchat"
+yo hubot --adapter="rocketchat@0.1"
 ```
 
 It'll ask you a few questions.
@@ -79,7 +113,7 @@ It'll ask you a few questions.
 Alternatively you can actually answer the questions in one command:
 
 ```
-yo hubot --owner="OWNER <owner@example.com>" --name="bot" --description="Bot" --adapter="rocketchat"
+yo hubot --owner="OWNER <owner@example.com>" --name="bot" --description="Bot" --adapter="rocketchat@0.1"
 ```
 
 Also be sure to remember the name you specify.  This is what the bot will respond to in Rocket.Chat.
@@ -101,7 +135,7 @@ Then start with: `bin/hubot -a rocketchat`
 #### Existing install
 If you already have hubot setup you can add the adapter.
 
-By doing: `npm install hubot-rocketchat`
+By doing: `npm install hubot-rocketchat@0.1`
 
 You will need to tell the adapter where your install is and what login information to use.
 
