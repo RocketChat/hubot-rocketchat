@@ -95,6 +95,7 @@ class RocketChatDriver
 		# promise returned
 		if process.env.ROCKETCHAT_AUTH is 'ldap'
 			return @asteroid.login
+				ldap: true
 				username: username
 				ldapPass: password
 				ldapOptions: {}
