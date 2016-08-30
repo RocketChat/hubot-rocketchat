@@ -12,9 +12,9 @@ Feel free to join us in the [#hubot](https://demo.rocket.chat/channel/hubot) cha
 
 ## Important
 
-v1.0.x of the adapter introduces breaking changes.  It is only compatible with v0.37.0 and higher of Rocket.Chat Server.
+The latest version of the adapter is only compatible with 0.37.1 and higher of Rocket.Chat Server.
 
-If you are using an older version of Rocket.Chat please use v0.1.4 of the adapter.
+If you are using Rocket.Chat  0.35.0 or earilier, please use v0.1.4 of the adapter.  (releases between 0.35.0 and 0.37.1 are not recommended for hubot operations) 
 
 #### NOTE
 If you want to integrate Rocket.Chat with GitHub or GitLab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access GitHub/GitLab APIs. You can easily extend these scripts for your custom application.
