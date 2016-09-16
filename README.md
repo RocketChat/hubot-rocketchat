@@ -105,7 +105,7 @@ Then you need to start the setup of the bot
 ```
 mkdir myhubot
 cd myhubot
-yo hubot --adapter="rocketchat@0.1"
+yo hubot --adapter="rocketchat@1"
 ```
 
 It'll ask you a few questions.
