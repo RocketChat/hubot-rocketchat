@@ -135,7 +135,7 @@ Then start with: `bin/hubot -a rocketchat`
 #### Existing install
 If you already have hubot setup you can add the adapter.
 
-By doing: `npm install hubot-rocketchat@0.1`
+By doing: `npm install hubot-rocketchat@1`
 
 You will need to tell the adapter where your install is and what login information to use.
 
