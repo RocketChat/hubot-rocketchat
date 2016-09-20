@@ -176,7 +176,7 @@ class RocketChatBotAdapter extends Adapter
 								message = new AttachmentMessage user, attachment, attachment.title, newmsg._id
 							else
 								message = new TextMessage user, newmsg.msg, newmsg._id
-								
+
 							startOfText = if message.text.indexOf('@') == 0 then 1 else 0
 							robotIsNamed = message.text.indexOf(@robot.name) == startOfText || message.text.indexOf(@robot.alias) == startOfText
 							if isDM and not robotIsNamed
@@ -216,6 +216,9 @@ class RocketChatBotAdapter extends Adapter
 		unless isDM
 			strings = strings.map (s) -> "@#{envelope.user.name} #{s}"
 		@send envelope, strings...
+
+	getRoomId: (room) =>
+		@chatdriver.getRoomId(room)
 
 	callMethod: (method, args...) =>
 		@chatdriver.callMethod(method, args)
