@@ -217,6 +217,9 @@ class RocketChatBotAdapter extends Adapter
 			strings = strings.map (s) -> "@#{envelope.user.name} #{s}"
 		@send envelope, strings...
 
+	getRoomId: (room) =>
+		@chatdriver.getRoomId(room)
+
 	callMethod: (method, args...) =>
 		@chatdriver.callMethod(method, args)
 
