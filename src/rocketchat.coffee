@@ -153,12 +153,13 @@ class RocketChatBotAdapter extends Adapter
 
 					if curts > @lastts
 						@lastts = curts
+						
+						user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username
+						user.room = newmsg.rid
+
 						if newmsg.t is 'uj'
-							user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
 							@robot.receive new EnterMessage user, null, newmsg._id
 						else
-							user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, room: newmsg.rid
-
 							# check for the presence of attachments in the message
 							if newmsg.file? and newmsg.attachments.length
 								attachment = newmsg.attachments[0]
