@@ -153,8 +153,8 @@ class RocketChatBotAdapter extends Adapter
 
 					if curts > @lastts
 						@lastts = curts
-						
-						user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username
+
+						user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, alias: newmsg.alias
 						user.room = newmsg.rid
 
 						if newmsg.t is 'uj'
