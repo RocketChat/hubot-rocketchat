@@ -161,7 +161,7 @@ class RocketChatBotAdapter extends Adapter
 							@robot.receive new EnterMessage user, null, newmsg._id
 						else
 							# check for the presence of attachments in the message
-							if newmsg.file? or newmsg.attachments.length
+							if newmsg.attachments? and newmsg.attachments.length
 								attachment = newmsg.attachments[0]
 
 								if attachment.image_url?
