@@ -14,7 +14,7 @@ Feel free to join us in the [#hubot](https://demo.rocket.chat/channel/hubot) cha
 
 The latest version of the adapter is only compatible with 0.37.1 and higher of Rocket.Chat Server.
 
-If you are using Rocket.Chat  0.35.0 or earilier, please use v0.1.4 of the adapter.  (releases between 0.35.0 and 0.37.1 are not recommended for hubot operations) 
+If you are using Rocket.Chat  0.35.0 or earlier, please use v0.1.4 of the adapter.  (releases between 0.35.0 and 0.37.1 are not recommended for hubot operations) 
 
 #### NOTE
 If you want to integrate Rocket.Chat with GitHub or GitLab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access GitHub/GitLab APIs. You can easily extend these scripts for your custom application.
@@ -162,7 +162,7 @@ Environment Variable | Description
 ROCKETCHAT_URL | the URL where Rocket.Chat is running, can be specified as `host:port` or `http://host:port`  or `https://host:port`. If you are using `https://`, you **MUST** setup websocket pass-through on your reverse proxy (NGINX, and so on) with a valid certificate (not self-signed).  Directly accessing Rocket.Chat without a reverse proxy via `https://` is not possible.
 ROCKETCHAT_USER | the bot user's name. It must be a registered user on your Rocket.Chat server, and the user must be granted `bot` role via Rocket.Chat's administrator's panel  (note that this will also be the name that you can summon the bot with)
 ROCKETCHAT_PASSWORD | the bot user's password
-ROCKETCHAT_AUTH | defaults to 'password' if undefinied, or set to 'ldap' if your use LDAP accounts for bots.
+ROCKETCHAT_AUTH | defaults to 'password' if undefined, or set to 'ldap' if your use LDAP accounts for bots.
 ROCKETCHAT_ROOM | the channel/channels names the bot should listen to message from.  This can be comma separated list.
 LISTEN_ON_ALL_PUBLIC | if 'true' then bot will listen and respond to messages from all public channels, as well as respond to direct messages. Default to 'false'. ROCKETCHAT_ROOM should be set to empty (with `ROCKETCHAT_ROOM=''` ) when using `LISTEN_ON_ALL_PUBLIC`. *IMPORTANT NOTE*:  This option also allows the bot to listen and respond to messages _from all newly created private groups_ that the bot's user has been added as a member.
 RESPOND_TO_DM | if 'true' then bot will listen and respond to direct messages. When setting the option to 'true', be sure to also set ROCKETCHAT_ROOM. This option needs not be set if you are including LISTEN_ON_ALL_PUBLIC.    Default is 'false'.
@@ -194,7 +194,7 @@ And:
 ```
 rocketbot help
 ```
-The example bot under `scripts` directory respeonds to:
+The example bot under `scripts` directory responds to:
 ```
 rocketbot report status
 ```
@@ -295,6 +295,6 @@ Once received, the bot:
 
 Q:   The architecture of hubot-rocketchat looks interesting, can you tell me more about it?
 
-A:  Sure, it is based on hubot-meteorchat.  hubot-meteorchat is the hubot integration project for Meteor based chats and real-time messaging systems.  Its driver based architecture simplifies creation and cusotmization of adapter for new systems. For example, the hubot-rocketchat integration is just hubot-meteorchat + Rocket.Chat driver.
+A:  Sure, it is based on hubot-meteorchat.  hubot-meteorchat is the hubot integration project for Meteor based chats and real-time messaging systems.  Its driver based architecture simplifies creation and customization of adapter for new systems. For example, the hubot-rocketchat integration is just hubot-meteorchat + Rocket.Chat driver.
 
 Learn more about hubot-meteorchat and other available drivers [at this link](https://github.com/Sing-Li/hubot-meteorchat).
