@@ -197,6 +197,9 @@ class RocketChatBotAdapter extends Adapter
 	send: (envelope, strings...) =>
 		@chatdriver.sendMessage(str, envelope.room) for str in strings
 
+	emote: (envelope, strings...) =>
+		@chatdriver.sendMessage("_#{str}_", envelope.room) for str in strings
+
 	customMessage: (data) =>
 		@chatdriver.customMessage(data)
 
