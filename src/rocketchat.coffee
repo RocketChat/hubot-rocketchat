@@ -21,6 +21,7 @@ RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
 RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
 ListenOnAllPublicRooms = (process.env.LISTEN_ON_ALL_PUBLIC or "false").toLowerCase() is 'true'
 RespondToDirectMessage = (process.env.RESPOND_TO_DM or "false").toLowerCase() is 'true'
+RespondToLivechatMessage = (process.env.RESPOND_TO_LIVECHAT or "false").toLowerCase() is "true"
 RespondToEditedMessage = (process.env.RESPOND_TO_EDITED or "false").toLowerCase() is 'true'
 SSLEnabled = "false"
 
@@ -141,7 +142,12 @@ class RocketChatBotAdapter extends Adapter
 					if isDM and not RespondToDirectMessage
 						return
 
-					if not isDM and not messageOptions.roomParticipant and not ListenOnAllPublicRooms
+					isLC = messageOptions.roomType is 'l'
+
+					if isLC and not RespondToLivechatMessage
+						return
+
+					if not isDM and not isLC and not messageOptions.roomParticipant and not ListenOnAllPublicRooms
 						return
 
 					curts = new Date(newmsg.ts.$date)
@@ -180,7 +186,7 @@ class RocketChatBotAdapter extends Adapter
 
 							startOfText = if message.text.indexOf('@') == 0 then 1 else 0
 							robotIsNamed = message.text.indexOf(@robot.name) == startOfText || message.text.indexOf(@robot.alias) == startOfText
-							if isDM and not robotIsNamed
+							if (isDM or isLC) and not robotIsNamed
 								message.text = "#{ @robot.name } #{ message.text }"
 							@robot.receive message
 							@robot.logger.info "Message sent to hubot brain."
