@@ -147,7 +147,7 @@ class RocketChatBotAdapter extends Adapter
 					if isLC and not RespondToLivechatMessage
 						return
 
-					if not isDM and not isLC and not messageOptions.roomParticipant and not ListenOnAllPublicRooms
+					if not isDM and not messageOptions.roomParticipant and not ListenOnAllPublicRooms and not RespondToLivechatMessage
 						return
 
 					curts = new Date(newmsg.ts.$date)
