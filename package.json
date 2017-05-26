@@ -1,6 +1,6 @@
 {
 	"name": "hubot-rocketchat",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"author": {
 		"name": "Rocket.Chat",
 		"url": "https://rocket.chat/"
@@ -33,13 +33,13 @@
 		"email": "support@rocket.chat"
 	},
 	"devDependencies": {
-		"coffee-script": "~1.7.1"
+		"coffee-script": "~1.12.6"
 	},
 	"main": "./src/rocketchat",
 	"dependencies": {
 		"asteroid": "https://github.com/RocketChat/asteroid.git",
 		"parent-require": "^1.0.0",
-		"q": "^1.4.1",
-		"lru-cache": "~4.0.0"
+		"q": "^1.5.0",
+		"lru-cache": "~4.0.2"
 	}
 }
