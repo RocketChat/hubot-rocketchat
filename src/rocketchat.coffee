@@ -155,11 +155,12 @@ class RocketChatBotAdapter extends Adapter
 						@lastts = curts
 
 						user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, alias: newmsg.alias
-						user.room = newmsg.rid
 
-						if newmsg.t is 'uj'
-							@robot.receive new EnterMessage user, null, newmsg._id
-						else
+						@chatdriver.getRommName(newmsg.rid).then((roomName)=>
+							user.room = roomName
+							if newmsg.t is 'uj'
+								@robot.receive new EnterMessage user, null, newmsg._id
+							else
 							# check for the presence of attachments in the message
 							if newmsg.file? and newmsg.attachments.length
 								attachment = newmsg.attachments[0]
@@ -184,6 +185,10 @@ class RocketChatBotAdapter extends Adapter
 								message.text = "#{ @robot.name } #{ message.text }"
 							@robot.receive message
 							@robot.logger.info "Message sent to hubot brain."
+						).catch((roomErr) =>
+							@robot.logger.error "Unable to get room name: #{JSON.stringify(roomErr)} Reason: #{roomErr.reason}"
+							throw roomErr
+						)
 			)
 			.then(() =>
 				@emit 'connected'
