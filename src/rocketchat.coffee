@@ -158,6 +158,7 @@ class RocketChatBotAdapter extends Adapter
 
 						@chatdriver.getRommName(newmsg.rid).then((roomName)=>
 							user.room = roomName
+							user.roomID = newmsg.rid
 							if newmsg.t is 'uj'
 								@robot.receive new EnterMessage user, null, newmsg._id
 							else
