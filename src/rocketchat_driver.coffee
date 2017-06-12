@@ -40,7 +40,7 @@ class RocketChatDriver
 	getRoomId: (room) =>
 		@tryCache _roomIdCache, 'getRoomIdByNameOrId', room, 'Room ID'
 
-	getRommName: (room) =>
+	getRoomName: (room) =>
 		@tryCache _roomNameCache, 'getRoomNameById', room, 'Room Name'
 
 	getDirectMessageRoomId: (username) =>
