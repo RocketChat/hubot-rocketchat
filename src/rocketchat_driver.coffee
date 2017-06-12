@@ -115,10 +115,10 @@ class RocketChatDriver
 			return @asteroid.loginWithPassword username, password
 
 	prepMeteorSubscriptions: (data) =>
-# use data to cater for param differences - until we learn more
-#  data.uid
-#  data.roomid
-# return promise
+		# use data to cater for param differences - until we learn more
+		#  data.uid
+		#  data.roomid
+		# return promise
 		@logger.info "Preparing Meteor Subscriptions.."
 		msgsub = @asteroid.subscribe _msgsubtopic, data.roomid, true
 		@logger.info "Subscribing to Room: #{data.roomid}"
@@ -130,12 +130,12 @@ class RocketChatDriver
 
 		rQ = @messages.reactiveQuery {}
 		rQ.on "change", (id) =>
-# awkward syntax due to asteroid limitations
-# - it ain't no minimongo cursor
-# @logger.info "Change received on ID " + id
+			# awkward syntax due to asteroid limitations
+			# - it ain't no minimongo cursor
+			# @logger.info "Change received on ID " + id
 			changedMsgQuery = @messages.reactiveQuery {"_id": id}
 			if changedMsgQuery.result && changedMsgQuery.result.length > 0
-# console.log('result:', JSON.stringify(changedMsgQuery.result, null, 2))
+				# console.log('result:', JSON.stringify(changedMsgQuery.result, null, 2))
 				changedMsg = changedMsgQuery.result[0]
 				# console.log('changed:', JSON.stringify(changedMsg, null, 2));
 				if changedMsg.args?
