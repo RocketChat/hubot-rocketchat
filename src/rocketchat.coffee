@@ -163,7 +163,7 @@ class RocketChatBotAdapter extends Adapter
 								@robot.receive new EnterMessage user, null, newmsg._id
 							else
 							# check for the presence of attachments in the message
-							if newmsg.file? and newmsg.attachments.length
+							if newmsg.attachments? and newmsg.attachments.length
 								attachment = newmsg.attachments[0]
 
 								if attachment.image_url?
@@ -176,7 +176,7 @@ class RocketChatBotAdapter extends Adapter
 									attachment.link = "#{RocketChatURL}#{attachment.video_url}"
 									attachment.type = 'video'
 
-								message = new AttachmentMessage user, attachment, attachment.title, newmsg._id
+								message = new AttachmentMessage user, attachment, newmsg.msg, newmsg._id
 							else
 								message = new TextMessage user, newmsg.msg, newmsg._id
 
