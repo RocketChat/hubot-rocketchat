@@ -99,7 +99,8 @@ class RocketChatDriver
 			bot: true,
 			groupable: false,
 			alias: message.alias,
-			avatar: message.avatar
+			avatar: message.avatar,
+			emoji: message.emoji,
 		})
 
 	login: (username, password) =>
