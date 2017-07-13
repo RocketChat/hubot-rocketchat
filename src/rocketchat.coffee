@@ -21,6 +21,7 @@ RocketChatUser = process.env.ROCKETCHAT_USER or "hubot"
 RocketChatPassword = process.env.ROCKETCHAT_PASSWORD or "password"
 ListenOnAllPublicRooms = (process.env.LISTEN_ON_ALL_PUBLIC or "false").toLowerCase() is 'true'
 RespondToDirectMessage = (process.env.RESPOND_TO_DM or "false").toLowerCase() is 'true'
+RespondToLivechatMessage = (process.env.RESPOND_TO_LIVECHAT or "false").toLowerCase() is "true"
 RespondToEditedMessage = (process.env.RESPOND_TO_EDITED or "false").toLowerCase() is 'true'
 SSLEnabled = "false"
 
@@ -84,6 +85,7 @@ class RocketChatBotAdapter extends Adapter
 				@robot.logger.error "If joining GENERAL please make sure its using all caps."
 				@robot.logger.error "If using LDAP, turn off LDAP, and turn on general user registration with email
 					verification off."
+				process.exit 1 #hack to make hubot die on login error to fix #203
 				throw loginErr #rethrow to exit the chain
 			)
 			# Get room IDS
@@ -141,7 +143,12 @@ class RocketChatBotAdapter extends Adapter
 					if isDM and not RespondToDirectMessage
 						return
 
-					if not isDM and not messageOptions.roomParticipant and not ListenOnAllPublicRooms
+					isLC = messageOptions.roomType is 'l'
+
+					if isLC and not RespondToLivechatMessage
+						return
+
+					if not isDM and not messageOptions.roomParticipant and not ListenOnAllPublicRooms and not RespondToLivechatMessage
 						return
 
 					curts = new Date(newmsg.ts.$date)
@@ -155,13 +162,15 @@ class RocketChatBotAdapter extends Adapter
 						@lastts = curts
 
 						user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, alias: newmsg.alias
-						user.room = newmsg.rid
 
-						if newmsg.t is 'uj'
-							@robot.receive new EnterMessage user, null, newmsg._id
-						else
+						@chatdriver.getRoomName(newmsg.rid).then((roomName)=>
+							user.room = roomName
+							user.roomID = newmsg.rid
+							if newmsg.t is 'uj'
+								@robot.receive new EnterMessage user, null, newmsg._id
+							else
 							# check for the presence of attachments in the message
-							if newmsg.file? and newmsg.attachments.length
+							if newmsg.attachments? and newmsg.attachments.length
 								attachment = newmsg.attachments[0]
 
 								if attachment.image_url?
@@ -174,16 +183,20 @@ class RocketChatBotAdapter extends Adapter
 									attachment.link = "#{RocketChatURL}#{attachment.video_url}"
 									attachment.type = 'video'
 
-								message = new AttachmentMessage user, attachment, attachment.title, newmsg._id
+								message = new AttachmentMessage user, attachment, newmsg.msg, newmsg._id
 							else
 								message = new TextMessage user, newmsg.msg, newmsg._id
 
 							startOfText = if message.text.indexOf('@') == 0 then 1 else 0
 							robotIsNamed = message.text.indexOf(@robot.name) == startOfText || message.text.indexOf(@robot.alias) == startOfText
-							if isDM and not robotIsNamed
+							if (isDM or isLC) and not robotIsNamed
 								message.text = "#{ @robot.name } #{ message.text }"
 							@robot.receive message
 							@robot.logger.info "Message sent to hubot brain."
+						).catch((roomErr) =>
+							@robot.logger.error "Unable to get room name: #{JSON.stringify(roomErr)} Reason: #{roomErr.reason}"
+							throw roomErr
+						)
 			)
 			.then(() =>
 				@emit 'connected'
