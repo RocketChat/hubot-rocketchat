@@ -5,16 +5,20 @@
 		"name": "Rocket.Chat",
 		"url": "https://rocket.chat/"
 	},
-	"contributors": [{
-		"name": "Sing Li",
-		"email": "sing.li@rocket.chat"
-	}, {
-		"name": "Gabriel Engel",
-		"email": "gabriel.engel@rocket.chat"
-	}, {
-		"name": "Aaron Ogle",
-		"email": "aaron.ogle@rocket.chat"
-	}],
+	"contributors": [
+		{
+			"name": "Sing Li",
+			"email": "sing.li@rocket.chat"
+		},
+		{
+			"name": "Gabriel Engel",
+			"email": "gabriel.engel@rocket.chat"
+		},
+		{
+			"name": "Aaron Ogle",
+			"email": "aaron.ogle@rocket.chat"
+		}
+	],
 	"description": "Hubot Rocket.Chat Adapter",
 	"keywords": [
 		"hubot",
