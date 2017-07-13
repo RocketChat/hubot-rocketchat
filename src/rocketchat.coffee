@@ -85,6 +85,7 @@ class RocketChatBotAdapter extends Adapter
 				@robot.logger.error "If joining GENERAL please make sure its using all caps."
 				@robot.logger.error "If using LDAP, turn off LDAP, and turn on general user registration with email
 					verification off."
+				process.exit 1 #hack to make hubot die on login error to fix #203
 				throw loginErr #rethrow to exit the chain
 			)
 			# Get room IDS
