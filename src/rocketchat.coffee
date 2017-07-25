@@ -163,9 +163,16 @@ class RocketChatBotAdapter extends Adapter
 
 						user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, alias: newmsg.alias
 
-						@chatdriver.getRoomName(newmsg.rid).then((roomName)=>
-							user.room = roomName
+						@chatdriver.checkMethodExists("getRoomNameById").then(() =>
+							return @chatdriver.getRoomName(newmsg.rid).then((roomName) =>
+								@robot.logger.info("setting roomName: #{roomName}")
+								user.room = roomName
+							)
+						).catch((err) =>
+							return Q()
+						).then(() =>
 							user.roomID = newmsg.rid
+
 							if newmsg.t is 'uj'
 								@robot.receive new EnterMessage user, null, newmsg._id
 							else
@@ -193,9 +200,6 @@ class RocketChatBotAdapter extends Adapter
 								message.text = "#{ @robot.name } #{ message.text }"
 							@robot.receive message
 							@robot.logger.info "Message sent to hubot brain."
-						).catch((roomErr) =>
-							@robot.logger.error "Unable to get room name: #{JSON.stringify(roomErr)} Reason: #{roomErr.reason}"
-							throw roomErr
 						)
 			)
 			.then(() =>

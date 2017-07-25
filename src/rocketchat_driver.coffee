@@ -11,6 +11,8 @@ _msgsubtopic = 'stream-room-messages' # 'messages'
 _msgsublimit = 10 # this is not actually used right now
 _messageCollection = 'stream-room-messages'
 
+_methodExists = {}
+
 # room id cache
 _roomCacheSize = parseInt(process.env.ROOM_ID_CACHE_SIZE) || 10
 _directMessageRoomCacheSize = parseInt(process.env.DM_ROOM_ID_CACHE_SIZE) || 100
@@ -46,6 +48,28 @@ class RocketChatDriver
 	getDirectMessageRoomId: (username) =>
 		@tryCache _directMessageRoomIdCache, 'createDirectMessage', username, 'DM Room ID'
 
+	checkMethodExists: (method) =>
+		if !_methodExists[method]?
+			@logger.info "Checking to see if method: #{method} exists"
+			r = @asteroid.call(method, "")
+			r.result.then((res) =>
+				_methodExists[method] = true
+				return Q()
+			).catch((err) =>
+				if err.error == 404
+					_methodExists[method] = false
+					@logger.info "Method: #{method} does not exist"
+					return Q.reject("Method: #{method} does not exist")
+				else
+					_methodExists[method] = true
+					return Q()
+			)
+		else
+			if _methodExists[method]
+				return Q()
+			else
+				return Q.reject()
+
 	tryCache: (cacheArray, method, key, name) =>
 		name ?= method
 		cached = cacheArray.get key
@@ -55,9 +79,10 @@ class RocketChatDriver
 		else
 			@logger.info "Looking up #{name} for: #{key}"
 			r = @asteroid.call method, key
-			return r.result.then (res) =>
+			return r.result.then((res) =>
 				cacheArray.set key, res
 				return Q(res)
+			)
 
 	joinRoom: (userid, uname, roomid, cb) =>
 		@logger.info "Joining Room: #{roomid}"
