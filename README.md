@@ -172,7 +172,7 @@ ROOM_ID_CACHE_SIZE | The maximum number of room IDs to cache. You can increase t
 DM_ROOM_ID_CACHE_SIZE | The maximum number of Direct Message room IDs to cache. You can increase this if your bot usually sends a large number of Direct Messages. Default value: 100
 ROOM_ID_CACHE_MAX_AGE | Room IDs and DM Room IDS are cached for this number of seconds. You can increase this value to improve performance in certain scenarios. Default value: 300
 BOT_NAME | ** Name of the bot.  This is what it responds to
-EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot.
+EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot. Could be git+https or git+http protocol urls (see [here](https://docs.npmjs.com/cli/install) for details) if your script is not on the NPM public registry.
 
 ** - Docker image only.
 ##### Configuring the Bot to listen and respond to direct messages plus all new public channels and private groups
