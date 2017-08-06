@@ -170,8 +170,10 @@ class RocketChatBotAdapter extends Adapter
 									user.room = roomName
 								)
 							else
+								user.room = newmsg.rid
 								return Q()
 						).catch((err) =>
+							user.room = newmsg.rid
 							return Q()
 						).then(() =>
 							user.roomID = newmsg.rid
