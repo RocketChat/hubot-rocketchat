@@ -164,10 +164,13 @@ class RocketChatBotAdapter extends Adapter
 						user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, alias: newmsg.alias
 
 						@chatdriver.checkMethodExists("getRoomNameById").then(() =>
-							return @chatdriver.getRoomName(newmsg.rid).then((roomName) =>
-								@robot.logger.info("setting roomName: #{roomName}")
-								user.room = roomName
-							)
+							if not isDM and not isLC
+								return @chatdriver.getRoomName(newmsg.rid).then((roomName) =>
+									@robot.logger.info("setting roomName: #{roomName}")
+									user.room = roomName
+								)
+							else
+								return Q()
 						).catch((err) =>
 							return Q()
 						).then(() =>
