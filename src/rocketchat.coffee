@@ -41,7 +41,7 @@ class AttachmentMessage extends TextMessage
 
 class RocketChatBotAdapter extends Adapter
 
-	run: =>
+	run: ->
 		@robot.logger.info "Starting Rocketchat adapter version #{pkg.version}..."
 
 		@robot.logger.info "Once connected to rooms I will respond to the name: #{@robot.name}"
@@ -216,16 +216,16 @@ class RocketChatBotAdapter extends Adapter
 				@robot.logger.error "Unable to complete setup. See https://github.com/RocketChat/hubot-rocketchat for more info."
 			)
 
-	send: (envelope, strings...) =>
+	send: (envelope, strings...) ->
 		@chatdriver.sendMessage(str, envelope.room) for str in strings
 
-	emote: (envelope, strings...) =>
+	emote: (envelope, strings...) ->
 		@chatdriver.sendMessage("_#{str}_", envelope.room) for str in strings
 
-	customMessage: (data) =>
+	customMessage: (data) ->
 		@chatdriver.customMessage(data)
 
-	sendDirect: (envelope, strings...) =>
+	sendDirect: (envelope, strings...) ->
 		channel = @chatdriver.getDirectMessageRoomId(envelope.user.name)
 		Q(channel)
 		.then((chan) =>
@@ -236,17 +236,17 @@ class RocketChatBotAdapter extends Adapter
 			@robot.logger.error "Unable to get DirectMessage Room ID: #{JSON.stringify(err)} Reason: #{err.reason}"
 		)
 
-	reply: (envelope, strings...) =>
+	reply: (envelope, strings...) ->
 		@robot.logger.info "reply"
 		isDM = envelope.room.indexOf(envelope.user.id) > -1
 		unless isDM
 			strings = strings.map (s) -> "@#{envelope.user.name} #{s}"
 		@send envelope, strings...
 
-	getRoomId: (room) =>
+	getRoomId: (room) ->
 		@chatdriver.getRoomId(room)
 
-	callMethod: (method, args...) =>
+	callMethod: (method, args...) ->
 		@chatdriver.callMethod(method, args)
 
 exports.use = (robot) ->
