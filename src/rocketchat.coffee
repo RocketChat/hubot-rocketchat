@@ -177,6 +177,7 @@ class RocketChatBotAdapter extends Adapter
 							return Q()
 						).then(() =>
 							user.roomID = newmsg.rid
+							user.roomType = messageOptions.roomType
 
 							if newmsg.t is 'uj'
 								@robot.receive new EnterMessage user, null, newmsg._id
