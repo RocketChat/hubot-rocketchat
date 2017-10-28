@@ -112,7 +112,7 @@ $ npm install coffee-script -save
 
  Set node version: `export NODE_VERSION=default`
 
- If you want to start your hubot with [sytemd](https://github.com/hubotio/hubot/blob/master/examples/hubot.service) use `nvm-exec`:
+ If you want to start your hubot with [systemd](https://github.com/hubotio/hubot/blob/master/examples/hubot.service) use `nvm-exec`:
 
  ```
 ExecStart=/home/hubot/.nvm/nvm-exec /home/hubot/hubot/bin/hubot --adapter rocketchat
