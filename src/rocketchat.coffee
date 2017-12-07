@@ -180,6 +180,7 @@ class RocketChatBotAdapter extends Adapter
 							user.roomType = messageOptions.roomType
 
 							if newmsg.t is 'uj'
+								user.messageType = 'uj'
 								@robot.receive new EnterMessage user, null, newmsg._id
 							else
 							# check for the presence of attachments in the message
