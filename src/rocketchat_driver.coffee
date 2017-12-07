@@ -91,6 +91,14 @@ class RocketChatDriver
 
 		return r.updated
 
+	# added this method so the User class in hubot will have access to the user's role
+	getUserRoles: () =>
+		@logger.info "Getting user Roles"
+
+		r = @asteroid.call 'getUserRoles'
+		
+		return r.result
+
 	prepareMessage: (content, roomid) =>
 		@logger.debug "Preparing message from #{ typeof content }"
 		if typeof content is 'string'
@@ -153,7 +161,7 @@ class RocketChatDriver
 	setupReactiveMessageList: (receiveMessageCallback) =>
 		@logger.info "Setting up reactive message list..."
 		@messages = @asteroid.getCollection _messageCollection
-
+		
 		rQ = @messages.reactiveQuery {}
 		rQ.on "change", (id) =>
 			# awkward syntax due to asteroid limitations
