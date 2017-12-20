@@ -21,10 +21,10 @@ _roomIdCache = LRU(max: _roomCacheSize, maxAge: 1000 * _cacheMaxAge)
 _directMessageRoomIdCache = LRU(max: _directMessageRoomCacheSize, maxAge: 1000 * _cacheMaxAge)
 _roomNameCache = LRU(max: _roomCacheSize, maxAge: 1000 * _cacheMaxAge)
 
-_queues = {}
-_delayTime = parseInt(process.env.SEND_DELAY)
-_msgLastSentTimes = {}
-_intervalTimers = {}
+_delayTime = parseInt(process.env.SEND_DELAY) || 0
+_queues = {} # per-room message queues
+_msgLastSentTimes = {} # per-room record of when a message was last sent
+_intervalTimers = {} # per-room interval timers
 		
 		# driver specific to Rocketchat hubot integration
 # plugs into generic rocketchatbotadapter
@@ -115,10 +115,11 @@ class RocketChatDriver
 				@logger.error('[sendMessage] Error:', error)
 
 	slowSender: (roomid) ->
+		# dequeue and send the next message
 		if (message = _queues[roomid].shift()) != undefined
 			@asteroidSend message, roomid
-		# if there's still stuff to send then
-		# restart the interval timer to <_delayTime> ms
+		# if there are still messages to send then
+		# restart the interval timer to (_delayTime) ms
 		if _queues[roomid].length
 			if not _intervalTimers[roomid]
 				_intervalTimers[roomid] = setInterval slowSender, _delayTime, roomid
@@ -132,20 +133,20 @@ class RocketChatDriver
 
 		waitTimeAgo = Date.now() - _delayTime
 		# see how long it is since the last message was sent
+		# if it was less than (_delayTime) ago then delay sending
 		if _msgLastSentTimes[roomid] > waitTimeAgo
-			console.log "I can\'t keep up with you: #{message.msg}"
+			@logger.debug "Enqueuing message for delayed send: #{message.msg}"
 
-			# enqueue the message
+			# enqueue the message, creating a new queue if necessary
 			_queues[roomid] = [] if !_queues[roomid] 
 			_queues[roomid].push message
 
 			# start an interval timer if necessary
 			if !_intervalTimers[roomid]
-				console.log "Will send this message in #{_msgLastSentTimes[roomid] - waitTimeAgo}ms"
+				@logger.debug "Will send this message in #{_msgLastSentTimes[roomid] - waitTimeAgo}ms"
 				_intervalTimers[roomid] = setInterval @slowSender.bind(@), _msgLastSentTimes[roomid] - waitTimeAgo, roomid
-				# don't go any further
 		else
-			# send the message
+			# otherwisejust send the message
 			@asteroidSend message, roomid
 
 	sendMessage: (message, room) =>
