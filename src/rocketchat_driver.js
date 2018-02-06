@@ -2,10 +2,10 @@ import Asteroid from 'asteroid';
 import Q from 'q';
 import LRU from 'lru-cache';
 
-
 const _msgsubtopic = 'stream-room-messages';
 const _msgsublimit = 10;
 const _messageCollection = 'stream-room-messages';
+const _methodExists = {};
 const _roomCacheSize = parseInt(process.env.ROOM_ID_CACHE_SIZE) || 10;
 const _directMessageRoomCacheSize = parseInt(process.env.DM_ROOM_ID_CACHE_SIZE) || 100;
 const _cacheMaxAge = parseInt(process.env.ROOM_ID_CACHE_MAX_AGE) || 300;
@@ -50,6 +50,32 @@ export class RocketChatDriver {
 	getDirectMessageRoomId(username) {
 		this.tryCache(_directMessageRoomIdCache, 'createDirectMessage', username, 'DM Room ID');
 	}
+
+  checkMethodExists(method) {
+    if (_methodExists[method] == null) {
+      this.logger.info("Checking to see if method: " + method + " exists");
+      r = this.asteroid.call(method, "")
+      return r.result.then((res) => {
+        _methodExists[method] = true;
+        return Q();
+      }).catch((err) => {
+        if (err.error === 404) {
+          _methodExists[method] = false;
+          this.logger.info("Method: " + method + " does not exist");
+          return Q.reject("Method: " + method + " does not exist");
+        } else {
+          _methodExists[method] = true;
+          return Q();
+        }
+      });
+    } else {
+      if (_methodExists[method]) {
+        return Q();
+      } else {
+        return Q.reject();
+      }
+    }
+  };
 
 	tryCache(cacheArray, method, key, name) {
 		if (name === null) {

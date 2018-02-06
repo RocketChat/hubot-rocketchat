@@ -179,15 +179,29 @@ class RocketChatBotAdapter extends Adapter {
 
 												let user = this.robot.brain.userForId(newmsg.u._id, {name: newmsg.u.username, alias: newmsg.alias});
 
-												this.chatdriver.getRoomName(newmsg.rid)
-													.catch((roomErr) => {
-														this.robot.logger.error(`Unable to get room name: ${JSON.stringify(roomErr)} Reason: ${roomErr.reason}`);
-														throw(roomErr);
+												this.chatdriver.checkMethodExists("getRoomNameById")
+													.then(() => {
+														if (!isDM && !isLC) {
+															return this.chatdriver.getRoomName(newmsg.rid)
+																.then((roomName) => {
+																	this.robot.logger.info("setting roomName: "+roomName)
+																	user.room = roomName
+																})
+														} else {
+															user.room = newmsg.rid
+															return Q()
+														}
 													})
-													.then((roomName) => {
-														user.room = roomName;
+													.catch((err) => {
+														user.room = newmsg.rid
+														return Q()
+													})
+													.then(() => {
 														user.roomID = newmsg.rid;
+														user.roomtType = messageOptions.roomtType;
+
 														if (newmsg.t === 'uj') {
+															user.messageType = 'uj'
 															this.robot.receive(new EnterMessage(user, null, newmsg._id));
 														}
 
