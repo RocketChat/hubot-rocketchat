@@ -123,7 +123,7 @@ class RocketChatBotAdapter extends Adapter
 				@robot.logger.info "All rooms joined."
 				for result, idx in res
 					@robot.logger.info "Successfully joined room: #{rooms[idx]}"
-
+				
 				return @chatdriver.prepMeteorSubscriptions({uid: userid, roomid: '__my_messages__'})
 				.catch((subErr) =>
 					@robot.logger.error "Unable to subscribe: #{JSON.stringify(subErr)} Reason: #{subErr.reason}"
@@ -161,52 +161,74 @@ class RocketChatBotAdapter extends Adapter
 					if curts > @lastts
 						@lastts = curts
 
-						user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, alias: newmsg.alias
+						# call to get an array of rocketchat users with each users roles
+						@chatdriver.getUserRoles()
+						.then((userRoles) => 
+							@robot.logger.info "Successfully got all user roles"
+							
+							# match the user in the user array to the newmsg sender user.
+							for user in userRoles
+								if newmsg.u.username is user.username
+									roleArray = user.roles
+									break
+								else
+									# assign an empty role array incase something goes wrong
+									roleArray = []
 
-						@chatdriver.checkMethodExists("getRoomNameById").then(() =>
-							if not isDM and not isLC
-								return @chatdriver.getRoomName(newmsg.rid).then((roomName) =>
-									@robot.logger.info("setting roomName: #{roomName}")
-									user.room = roomName
-								)
-							else
+							# add the roles array here, which will then become availible in the User class in hubot
+							user = @robot.brain.userForId newmsg.u._id, name: newmsg.u.username, alias: newmsg.alias, roles: roleArray
+
+							@chatdriver.checkMethodExists("getRoomNameById").then(() =>
+								if not isDM and not isLC
+									return @chatdriver.getRoomName(newmsg.rid).then((roomName) =>
+										@robot.logger.info("setting roomName: #{roomName}")
+										user.room = roomName
+									)
+								else
+									user.room = newmsg.rid
+									return Q()
+							).catch((err) =>
 								user.room = newmsg.rid
 								return Q()
-						).catch((err) =>
-							user.room = newmsg.rid
-							return Q()
-						).then(() =>
-							user.roomID = newmsg.rid
-							user.roomType = messageOptions.roomType
+							).then(() =>
+								user.roomID = newmsg.rid
+								user.roomType = messageOptions.roomType
 
-							if newmsg.t is 'uj'
-								user.messageType = 'uj'
-								@robot.receive new EnterMessage user, null, newmsg._id
-							else
-							# check for the presence of attachments in the message
-							if newmsg.attachments? and newmsg.attachments.length
-								attachment = newmsg.attachments[0]
+								if newmsg.t is 'uj'
+									user.messageType = 'uj'
+									@robot.receive new EnterMessage user, null, newmsg._id
+								else
+								# check for the presence of attachments in the message
+								if newmsg.attachments? and newmsg.attachments.length
+									attachment = newmsg.attachments[0]
 
-								if attachment.image_url?
-									attachment.link = "#{RocketChatURL}#{attachment.image_url}"
-									attachment.type = 'image'
-								else if attachment.audio_url?
-									attachment.link = "#{RocketChatURL}#{attachment.audio_url}"
-									attachment.type = 'audio'
-								else if attachment.video_url?
-									attachment.link = "#{RocketChatURL}#{attachment.video_url}"
-									attachment.type = 'video'
+									if attachment.image_url?
+										attachment.link = "#{RocketChatURL}#{attachment.image_url}"
+										attachment.type = 'image'
+									else if attachment.audio_url?
+										attachment.link = "#{RocketChatURL}#{attachment.audio_url}"
+										attachment.type = 'audio'
+									else if attachment.video_url?
+										attachment.link = "#{RocketChatURL}#{attachment.video_url}"
+										attachment.type = 'video'
 
-								message = new AttachmentMessage user, attachment, newmsg.msg, newmsg._id
-							else
-								message = new TextMessage user, newmsg.msg, newmsg._id
+									message = new AttachmentMessage user, attachment, newmsg.msg, newmsg._id
+								else
+									message = new TextMessage user, newmsg.msg, newmsg._id
 
-							startOfText = if message.text.indexOf('@') == 0 then 1 else 0
-							robotIsNamed = message.text.indexOf(@robot.name) == startOfText || message.text.indexOf(@robot.alias) == startOfText
-							if (isDM or isLC) and not robotIsNamed
-								message.text = "#{ @robot.name } #{ message.text }"
-							@robot.receive message
-							@robot.logger.info "Message sent to hubot brain."
+								startOfText = if message.text.indexOf('@') == 0 then 1 else 0
+								robotIsNamed = message.text.indexOf(@robot.name) == startOfText || message.text.indexOf(@robot.alias) == startOfText
+								if (isDM or isLC) and not robotIsNamed
+									message.text = "#{ @robot.name } #{ message.text }"
+								@robot.receive message
+								@robot.logger.info "Message sent to hubot brain."
+							)
+						)
+						.catch((rolesErr) =>
+							# err catcher if rocketchat 'get user roles' method call fails
+							@robot.logger.error "Unable to getUserRoles: #{JSON.stringify(rolesErr)} Reason: #{rolesErr.reason}"
+							@robot.logger.error "Can't send message to hubot brain."
+							throw rolesErr
 						)
 			)
 			.then(() =>
