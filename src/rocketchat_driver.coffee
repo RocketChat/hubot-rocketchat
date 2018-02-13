@@ -21,7 +21,12 @@ _roomIdCache = LRU(max: _roomCacheSize, maxAge: 1000 * _cacheMaxAge)
 _directMessageRoomIdCache = LRU(max: _directMessageRoomCacheSize, maxAge: 1000 * _cacheMaxAge)
 _roomNameCache = LRU(max: _roomCacheSize, maxAge: 1000 * _cacheMaxAge)
 
-# driver specific to Rocketchat hubot integration
+_delayTime = parseInt(process.env.SEND_DELAY) || 0
+_queues = {} # per-room message queues
+_msgLastSentTimes = {} # per-room record of when a message was last sent
+_intervalTimers = {} # per-room interval timers
+		
+		# driver specific to Rocketchat hubot integration
 # plugs into generic rocketchatbotadapter
 
 class RocketChatDriver
@@ -100,19 +105,55 @@ class RocketChatDriver
 			message.rid = roomid
 		return message
 
+	asteroidSend: (message, roomid) ->
+		_msgLastSentTimes[roomid] = Date.now() if _delayTime > 0
+		
+		Q(@asteroid.call('sendMessage', message))
+			.then (result) =>
+				@logger.debug('[sendMessage] Success:', result)
+			.catch (error) =>
+				@logger.error('[sendMessage] Error:', error)
+
+	slowSender: (roomid) ->
+		# dequeue and send the next message
+		if (message = _queues[roomid].shift()) != undefined
+			@asteroidSend message, roomid
+		# if there are still messages to send then
+		# restart the interval timer to (_delayTime) ms
+		if _queues[roomid].length
+			if not _intervalTimers[roomid]
+				_intervalTimers[roomid] = setInterval slowSender, _delayTime, roomid
+		else
+			# clear and null our interval timer
+			clearInterval _intervalTimers[roomid]
+			_intervalTimers[roomid] = null
+
+	sendMessageByRoomId: (content, roomid) =>
+		message = @prepareMessage content, roomid
+
+		waitTimeAgo = Date.now() - _delayTime
+		# see how long it is since the last message was sent
+		# if it was less than (_delayTime) ago then delay sending
+		if _msgLastSentTimes[roomid] > waitTimeAgo
+			@logger.debug "Enqueuing message for delayed send: #{message.msg}"
+
+			# enqueue the message, creating a new queue if necessary
+			_queues[roomid] = [] if !_queues[roomid] 
+			_queues[roomid].push message
+
+			# start an interval timer if necessary
+			if !_intervalTimers[roomid]
+				@logger.debug "Will send this message in #{_msgLastSentTimes[roomid] - waitTimeAgo}ms"
+				_intervalTimers[roomid] = setInterval @slowSender.bind(@), _msgLastSentTimes[roomid] - waitTimeAgo, roomid
+		else
+			# otherwisejust send the message
+			@asteroidSend message, roomid
+
 	sendMessage: (message, room) =>
 		@logger.info "Sending Message To Room: #{room}"
 		r = @getRoomId room
 		r.then (roomid) =>
 			@sendMessageByRoomId message, roomid
-
-	sendMessageByRoomId: (content, roomid) =>
-		message = @prepareMessage content, roomid
-		Q(@asteroid.call('sendMessage', message))
-		.then (result)->
-			@logger.debug('[sendMessage] Success:', result)
-		.catch (error) ->
-			@logger.error('[sendMessage] Error:', error)
 
 	customMessage: (message) =>
 		@logger.info "Sending Custom Message To Room: #{message.channel}"
