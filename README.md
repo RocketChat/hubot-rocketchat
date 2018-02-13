@@ -15,7 +15,7 @@ Feel free to join us in the [#hubot](https://open.rocket.chat/channel/hubot) cha
 
 The latest version of the adapter is only compatible with 0.37.1 and higher of Rocket.Chat Server.
 
-If you are using Rocket.Chat  0.35.0 or earlier, please use v0.1.4 of the adapter.  (releases between 0.35.0 and 0.37.1 are not recommended for hubot operations) 
+If you are using Rocket.Chat  0.35.0 or earlier, please use v0.1.4 of the adapter.  (releases between 0.35.0 and 0.37.1 are not recommended for hubot operations)
 
 #### NOTE
 If you want to integrate Rocket.Chat with GitHub or GitLab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access GitHub/GitLab APIs. You can easily extend these scripts for your custom application.
@@ -87,8 +87,37 @@ hubot:
 ```
 
  If you wish that your bot listen to all public rooms and all private rooms he is joined to let the env "ROCKETCHAT_ROOM" empty like in the example above and set the env "LISTEN_ON_ALL_PUBLIC" to true.
- 
+
  Please take attention to some external scripts that are in the example above, some of them need your Google-API-Key in the docker compose file.
+
+### Alternative Node.js installation with [Node Version Manager](https://github.com/creationix/nvm) (nvm) in a local environment on Debian/Ubuntu
+
+ ```
+# adduser hubot
+# su - hubot
+$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+$ exit
+# su - hubot
+$ nvm install v4.8.5
+$ npm update -g
+$ npm install -g yo generator-hubot
+$ mkdir hubot
+$ cd hubot
+$ yo hubot (answer questions and use "rocketchat" as adapter)
+$ npm install coffee-script -save
+ ```
+ Make sure ~/hubot/bin/hubot is executable: `chmod 755 ./bin/hubot`
+
+ If you need a redis database: `apt install redis-server`
+
+ Set node version: `export NODE_VERSION=default`
+
+ If you want to start your hubot with [systemd](https://github.com/hubotio/hubot/blob/master/examples/hubot.service) use `nvm-exec`:
+
+ ```
+ExecStart=/home/hubot/.nvm/nvm-exec /home/hubot/hubot/bin/hubot --adapter rocketchat
+ ```
+ See EnvironmentFile directive for using environment variables in systemd units
 
 ### Add adapter to hubot
 
