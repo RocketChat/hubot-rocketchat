@@ -1,8 +1,9 @@
-import {Adapter, Response, TextMessage} from 'hubot';
-import ChatDriver from './rocketchat_driver';
-
+const Adapter = require('hubot/src/adapter')
+const Response = require('hubot/src/response')
+const { TextMessage } = require('hubot')
+const pkg = require('../package.json')
+const ChatDriver = require('./rocketchat_driver');
 let RocketChatURL = process.env.ROCKETCHAT_URL || 'localhost:3000';
-
 const RocketChatRoom = process.env.ROCKETCHAT_ROOM || 'GENERAL'; // Rooms to auto join
 const RocketChatUser = process.env.ROCKETCHAT_USER || 'hubot';
 const RocketChatPassword = process.env.ROCKETCHAT_PASSWORD || 'password';
@@ -13,32 +14,26 @@ const RespondToEditedMessage = (process.env.RESPOND_TO_EDITED || 'false').toLowe
 let SSLEnabled = "false"
 
 class RocketChatResponse extends Response {
-	sendDirect(...strings) {
+	sendDirect (...strings) {
 		this.robot.adapter.sendDirect(this.envelope, ...strings);
 	}
 
-	sendPrivate(...strings) {
+	sendPrivate (...strings) {
 		this.robot.adapter.sendDirect(this.envelope, ...strings);
 	}
 }
 
-class AttachmentMessage extends Textmessage {
+class AttachmentMessage extends TextMessage {
 	constructor(user, attachment, text, id) {
+		super(user, text, id);
 		this.user = user;
 		this.attachment = attachment;
 		this.text = text;
 		this.id = id;
-
-		super(user, text, id);
 	}
 }
 
 class RocketChatBotAdapter extends Adapter {
-	constructor(robot) {
-		this.robot = robot;
-		super(robot);
-	}
-
 	run() {
 		this.robot.logger.info(`Starting Rocketchat adapter version ${pkg.version}`);
 		this.robot.logger.info(`Once connected to rooms I will respond to the name: ${this.robot.name}`);
@@ -64,13 +59,13 @@ class RocketChatBotAdapter extends Adapter {
 			return this.robot.logger.error(`No services ROCKETCHAT_PASSWORD provided can't login.`);
 		}
 
-		this.robot.Response = new RocketChatResponse();
+		this.robot.Response = RocketChatResponse;
 
-		if (RocketChatURL.toLowerCase().substring(0,7) === 'http://') {
+		if (RocketChatURL.toLowerCase().substring(0, 7) === 'http://') {
 			RocketChatURL = RocketChatURL.substring(7);
 		}
 
-		if (RocketChatURL.toLowerCase().substring(0,8) === 'https://') {
+		if (RocketChatURL.toLowerCase().substring(0, 8) === 'https://') {
 			RocketChatURL = RocketChatURL.substring(8);
 			SSLEnabled = 'true'
 		}
@@ -82,14 +77,12 @@ class RocketChatBotAdapter extends Adapter {
 		let room_ids = null;
 		let userid = null;
 
-		this.chatdriver = new ChatDriver(RocketChatUrl, SSLEnabled, this.robot.logger, () => {
+		this.chatdriver = new ChatDriver(RocketChatURL, SSLEnabled, this.robot.logger, () => {
 			this.robot.logger.info('Successfully Connected!');
 
 			this.robot.logger.info(`Rooms Specified: ${RocketChatRoom}`);
 
-			rooms = RocketChatRoom.split(',').filter(room => {
-				return room != '';
-			});
+			const rooms = RocketChatRoom.split(',').filter((room) => (room != ''));
 
 			this.chatdriver.login(RocketChatUser, RocketChatPassword).catch((loginErr) => {
 				this.robot.logger.error(`Unable to Login: ${JSON.stringify(loginErr)} Reason: ${loginErr.reason}`);
@@ -97,54 +90,53 @@ class RocketChatBotAdapter extends Adapter {
 				this.robot.logger.error(`If using LDAP, turn off LDAP, and turn on general user registration with email verification off.`);
 
 				process.exit(1);
-				throw(loginErr);
+				throw (loginErr);
 			}).then((_userid) => {
 				userid = _userid;
 
 				this.robot.logger.info('Successfully logged in');
 				let roomids = [];
 
-				for (room in rooms) {
+				for (let room of rooms) {
 					roomids.push(this.chatdriver.getRoomId(room));
 				}
 
 				Q.all(roomids)
 					.catch((roomErr) => {
 						this.robot.logger.error(`Unable to get room id: ${JSON.stringify(roomErr)} Reason ${roomErr.reason}`);
-						throw(roomErr);
+						throw (roomErr);
 					})
 					.then((_room_ids) => {
 						room_ids = _room_ids;
 						let joinrooms = [];
 
-						for (room_id, index in room_ids) {
+						room_ids.forEach((room_id, index) => {
 							rooms[index] = room;
-
 							joinrooms.push(this.chatdriver.joinRoom(userid, RocketChatUser, room));
-						}
+						});
 
 						this.robot.logger.info(`rid: `, room_ids);
 						Q.all(joinrooms)
 							.catch((joinErr) => {
 								this.robot.logger.error(`Unable to join room: ${JSON.stringify(joinErr)} Reason: ${joinErr.reason}`);
-								throw(joinErr);
+								throw (joinErr);
 							})
-							.then((res) => {
+							.then((joined) => {
 								this.robot.logger.info('All rooms joined');
 
-								for (room, idx in res) {
-									this.robot.logger.info(`Successfully joined room: ${rooms[idx]}`);
-								}
+								joined.forEach((room, index) => {
+									this.robot.logger.info(`Successfully joined room: ${rooms[index]}`);
+								});
 
-								this.chatdriver.prepMeteorSubscriptions({uid: userid, roomid: '__my_messages__'})
+								this.chatdriver.prepMeteorSubscriptions({ uid: userid, roomid: '__my_messages__' })
 									.catch((subErr) => {
 										this.robot.logger.error(`Unable to subscribe ${JSON.stringify(subErr)} Reason: ${subErr.reason}`);
-										throw(subErr);
+										throw (subErr);
 									})
 									.then(() => {
 										this.robot.logger.info(`Successfully subscribed to messages`);
 
-										this.chatdriver.setupReactiveMessageList( (newmsg, messageOptions) => {
+										this.chatdriver.setupReactiveMessageList((newmsg, messageOptions) => {
 											if (newmsg.u._id === userid) {
 												return;
 											}
@@ -177,14 +169,14 @@ class RocketChatBotAdapter extends Adapter {
 											if (currentTs > this.lastts) {
 												this.lastts = currentTs;
 
-												let user = this.robot.brain.userForId(newmsg.u._id, {name: newmsg.u.username, alias: newmsg.alias});
+												let user = this.robot.brain.userForId(newmsg.u._id, { name: newmsg.u.username, alias: newmsg.alias });
 
 												this.chatdriver.checkMethodExists("getRoomNameById")
 													.then(() => {
 														if (!isDM && !isLC) {
 															return this.chatdriver.getRoomName(newmsg.rid)
 																.then((roomName) => {
-																	this.robot.logger.info("setting roomName: "+roomName)
+																	this.robot.logger.info("setting roomName: " + roomName)
 																	user.room = roomName
 																})
 														} else {
@@ -207,7 +199,7 @@ class RocketChatBotAdapter extends Adapter {
 
 														let message;
 
-														if (typeof(newmsg.attachments) !== 'undefined' && newmsg.attachments.length) {
+														if (typeof (newmsg.attachments) !== 'undefined' && newmsg.attachments.length) {
 															let attachment = newmsg.attachments[0];
 
 															if (attachment.image_url) {
@@ -270,7 +262,7 @@ class RocketChatBotAdapter extends Adapter {
 		// Check to see if the room is a DM
 		if (envelope.room.indexOf(envelope.user.id) === -1) {
 			// Since its not mention the user
-			strings.map( (s) => `@${envelope.user.name} ${s}`);
+			strings.map((s) => `@${envelope.user.name} ${s}`);
 			this.send(envelope, ...strings);
 		}
 	}
@@ -284,6 +276,6 @@ class RocketChatBotAdapter extends Adapter {
 	}
 }
 
-exports.use = (robot) => {
-	return new RocketChatBotAdapter(robot);
+module.exports = {
+	use: (robot) => new RocketChatBotAdapter(robot)
 }

@@ -1,6 +1,6 @@
-import Asteroid from 'asteroid';
-import Q from 'q';
-import LRU from 'lru-cache';
+const Asteroid = require('asteroid');
+const Q = require('q');
+const LRU = require('lru-cache');
 
 const _msgsubtopic = 'stream-room-messages';
 const _msgsublimit = 10;
@@ -11,30 +11,30 @@ const _directMessageRoomCacheSize = parseInt(process.env.DM_ROOM_ID_CACHE_SIZE) 
 const _cacheMaxAge = parseInt(process.env.ROOM_ID_CACHE_MAX_AGE) || 300;
 
 const _roomIdCache = LRU({
-  max: _roomCacheSize,
-  maxAge: 1000 * _cacheMaxAge
+	max: _roomCacheSize,
+	maxAge: 1000 * _cacheMaxAge
 });
 
 const _directMessageRoomIdCache = LRU({
-  max: _directMessageRoomCacheSize,
-  maxAge: 1000 * _cacheMaxAge
+	max: _directMessageRoomCacheSize,
+	maxAge: 1000 * _cacheMaxAge
 });
 
 const _roomNameCache = LRU({
-  max: _roomCacheSize,
-  maxAge: 1000 * _cacheMaxAge
+	max: _roomCacheSize,
+	maxAge: 1000 * _cacheMaxAge
 });
 
-export class RocketChatDriver {
+class RocketChatDriver {
 	constructor(url, ssl, logger, cb) {
 		this.logger = logger;
 		this.sslenable = false;
 
 		if (ssl === 'true') {
-			sslenable = true;
+			this.sslenable = true;
 		}
 
-		this.asteroid = new Asteroid(url, sslenable);
+		this.asteroid = new Asteroid(url, this.sslenable);
 		this.asteroid.on('connected', () => cb());
 		this.asteroid.on('reconnected', () => cb());
 	}
@@ -51,31 +51,31 @@ export class RocketChatDriver {
 		this.tryCache(_directMessageRoomIdCache, 'createDirectMessage', username, 'DM Room ID');
 	}
 
-  checkMethodExists(method) {
-    if (_methodExists[method] == null) {
-      this.logger.info("Checking to see if method: " + method + " exists");
-      r = this.asteroid.call(method, "")
-      return r.result.then((res) => {
-        _methodExists[method] = true;
-        return Q();
-      }).catch((err) => {
-        if (err.error === 404) {
-          _methodExists[method] = false;
-          this.logger.info("Method: " + method + " does not exist");
-          return Q.reject("Method: " + method + " does not exist");
-        } else {
-          _methodExists[method] = true;
-          return Q();
-        }
-      });
-    } else {
-      if (_methodExists[method]) {
-        return Q();
-      } else {
-        return Q.reject();
-      }
-    }
-  };
+	checkMethodExists(method) {
+		if (_methodExists[method] == null) {
+			this.logger.info("Checking to see if method: " + method + " exists");
+			r = this.asteroid.call(method, "")
+			return r.result.then((res) => {
+				_methodExists[method] = true;
+				return Q();
+			}).catch((err) => {
+				if (err.error === 404) {
+					_methodExists[method] = false;
+					this.logger.info("Method: " + method + " does not exist");
+					return Q.reject("Method: " + method + " does not exist");
+				} else {
+					_methodExists[method] = true;
+					return Q();
+				}
+			});
+		} else {
+			if (_methodExists[method]) {
+				return Q();
+			} else {
+				return Q.reject();
+			}
+		}
+	};
 
 	tryCache(cacheArray, method, key, name) {
 		if (name === null) {
@@ -107,7 +107,7 @@ export class RocketChatDriver {
 	prepareMessage(content, roomid) {
 		this.logger.info(`Preparing message from ${typeof content}`);
 		if (typeof content === 'string') {
-			message = {msg: content, rid: roomid};
+			message = { msg: content, rid: roomid };
 		} else {
 			message = content;
 			message.rid = roomid;
@@ -178,7 +178,7 @@ export class RocketChatDriver {
 
 		rQ = this.messages.reactiveQuery({});
 		rQ.on('change', (id) => {
-			const changedMsgQuery = this.messages.reactiveQuery({'_id': id});
+			const changedMsgQuery = this.messages.reactiveQuery({ '_id': id });
 			if (changedMsgQuery.result && changedMsgQuery.result.length > 0) {
 				changedMsg = changedMsgQuery.result[0];
 
@@ -197,3 +197,5 @@ export class RocketChatDriver {
 		return r.result;
 	}
 }
+
+module.exports = RocketChatDriver
