@@ -1,6 +1,6 @@
 ![Rocket.Chat logo](https://rocket.chat/images/logo/logo-dark.svg?v3)
 
-[![Rocket.Chat](https://demo.rocket.chat/api/v1/shield.svg?type=channel&name=Rocket.Chat&channel=hubot)](https://demo.rocket.chat/channel/hubot)
+[![Rocket.Chat](https://open.rocket.chat/api/v1/shield.svg?type=channel&name=Rocket.Chat&channel=hubot)](https://open.rocket.chat/channel/hubot)
 [![Test Coverage](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/coverage.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat/coverage)
 [![Code Climate](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/gpa.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/RocketChat/Rocket.Chat/raw/master/LICENSE)
@@ -9,7 +9,7 @@
 
 Hubot adapter for Rocket.Chat!
 
-Feel free to join us in the [#hubot](https://demo.rocket.chat/channel/hubot) channel to discuss hubot, and any scripts you might be working on.
+Feel free to join us in the [#hubot](https://open.rocket.chat/channel/hubot) channel to discuss hubot, and any scripts you might be working on.
 
 ## Important
 
@@ -166,13 +166,14 @@ ROCKETCHAT_PASSWORD | the bot user's password
 ROCKETCHAT_AUTH | defaults to 'password' if undefined, or set to 'ldap' if your use LDAP accounts for bots.
 ROCKETCHAT_ROOM | the channel/channels names the bot should listen to message from.  This can be comma separated list.
 LISTEN_ON_ALL_PUBLIC | if 'true' then bot will listen and respond to messages from all public channels, as well as respond to direct messages. Default to 'false'. ROCKETCHAT_ROOM should be set to empty (with `ROCKETCHAT_ROOM=''` ) when using `LISTEN_ON_ALL_PUBLIC`. *IMPORTANT NOTE*:  This option also allows the bot to listen and respond to messages _from all newly created private groups_ that the bot's user has been added as a member.
-RESPOND_TO_DM | if 'true' then bot will listen and respond to direct messages. When setting the option to 'true', be sure to also set ROCKETCHAT_ROOM. This option needs not be set if you are including LISTEN_ON_ALL_PUBLIC.    Default is 'false'.
+RESPOND_TO_DM | if 'true' then bot will respond to direct messages. When setting the option to 'true', be sure to also set ROCKETCHAT_ROOM or LISTEN_ON_ALL_PUBLIC.  Default is 'false'.
 RESPOND_TO_EDITED | if 'true' then bot will respond to edited messages. Default is 'false'.
 ROOM_ID_CACHE_SIZE | The maximum number of room IDs to cache. You can increase this if your bot usually sends messages to a large number of different rooms. Default value: 10
 DM_ROOM_ID_CACHE_SIZE | The maximum number of Direct Message room IDs to cache. You can increase this if your bot usually sends a large number of Direct Messages. Default value: 100
 ROOM_ID_CACHE_MAX_AGE | Room IDs and DM Room IDS are cached for this number of seconds. You can increase this value to improve performance in certain scenarios. Default value: 300
 BOT_NAME | ** Name of the bot.  This is what it responds to
 EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot. Could be git+https or git+http protocol urls (see [here](https://docs.npmjs.com/cli/install) for details) if your script is not on the NPM public registry.
+HUBOT_LOG_LEVEL | hubot log level, string [debug|info|warning|error], default: info 
 
 ** - Docker image only.
 ##### Configuring the Bot to listen and respond to direct messages plus all new public channels and private groups
