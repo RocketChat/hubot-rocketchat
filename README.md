@@ -90,6 +90,37 @@ hubot:
 
  Please take attention to some external scripts that are in the example above, some of them need your Google-API-Key in the docker compose file.
 
+### Alternative Node.js installation with [Node Version Manager](https://github.com/creationix/nvm) (nvm) in a local environment on Debian/Ubuntu
+
+```
+# adduser hubot
+# su - hubot
+$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+$ exit
+# su - hubot
+$ nvm install v4.8.5
+$ npm update -g
+$ npm install -g yo generator-hubot
+$ mkdir hubot
+$ cd hubot
+$ yo hubot (answer questions and use "rocketchat" as adapter)
+$ npm install coffee-script -save
+```
+
+Make sure ~/hubot/bin/hubot is executable: `chmod 755 ./bin/hubot`
+
+If you need a redis database: `apt install redis-server`
+
+Set node version: `export NODE_VERSION=default`
+
+If you want to start your hubot with [systemd](https://github.com/hubotio/hubot/blob/master/examples/hubot.service) use `nvm-exec`:
+
+```
+ExecStart=/home/hubot/.nvm/nvm-exec /home/hubot/hubot/bin/hubot --adapter rocketchat
+```
+
+See EnvironmentFile directive for using environment variables in systemd units
+
 ### Add adapter to hubot
 
 #### New install
