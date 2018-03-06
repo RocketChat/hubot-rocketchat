@@ -40,14 +40,9 @@
 		"url": "https://github.com/RocketChat/hubot-rocketchat/issues",
 		"email": "support@rocket.chat"
 	},
-	"devDependencies": {
-		"coffee-script": "~1.12.6"
-	},
-	"main": "./src/rocketchat",
+	"main": "index.js",
 	"dependencies": {
-		"asteroid": "https://github.com/RocketChat/asteroid.git",
-		"hubot": "^3.0.0",
-		"lru-cache": "~4.0.2",
-		"q": "^1.5.0"
+		"hubot": "https://github.com/hubotio/hubot.git#v3.0.1",
+		"rocketchat-bot-driver": "^0.0.3"
 	}
 }
