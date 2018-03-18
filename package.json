@@ -43,6 +43,6 @@
 	"main": "index.js",
 	"dependencies": {
 		"hubot": "https://github.com/hubotio/hubot.git#v3.0.1",
-		"rocketchat-bot-driver": "^0.0.3"
+		"rocketchat-sdk": "0.0.0-develop"
 	}
 }
