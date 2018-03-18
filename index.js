@@ -2,7 +2,7 @@ const Adapter = require('hubot/src/adapter')
 const Response = require('hubot/src/response')
 const { TextMessage, EnterMessage, LeaveMessage } = require('hubot/src/message')
 const pkg = require('./package.json')
-const { driver } = require('rocketchat-bot-driver')
+const { driver } = require('rocketchat-sdk')
 
 /** Take configs from environment settings or defaults */
 const config = {
@@ -84,7 +84,8 @@ class RocketChatBotAdapter extends Adapter {
         throw err
       })
       .then(() => {
-        driver.reactToMessages(this.receive.bind(this))
+        driver.reactToMessages(this.receive.bind(this)) // reactive callback
+        this.emit('connected') // tells hubot to load scripts
       })
   }
 
@@ -111,7 +112,6 @@ class RocketChatBotAdapter extends Adapter {
     if (!config.listenOnAllPublic && !isDM && !msgOpts.roomParticipant) return
 
     // Set current time for comparison to incoming
-    console.log(message)
     let currentReadTime = new Date(message.ts.$date)
 
     // Ignore edited messages if configured to
@@ -146,13 +146,19 @@ class RocketChatBotAdapter extends Adapter {
       })
       .then(() => {
         // Prepare message type for Hubot to receive...
-        this.robot.logger.info('Sending message to Hubot middleware')
+        this.robot.logger.info('Filters passed, will receive message')
 
         // Room joins, receive without further detail
-        if (message.t === 'uj') return this.robot.receive(new EnterMessage(user, null, message._id))
+        if (message.t === 'uj') {
+          this.robot.logger.debug('Message type EnterMessage')
+          return this.robot.receive(new EnterMessage(user, null, message._id))
+        }
 
         // Room exit, receive without further detail
-        if (message.t === 'ul') return this.robot.receive(new LeaveMessage(user, null, message._id))
+        if (message.t === 'ul') {
+          this.robot.logger.debug('Message type LeaveMessage')
+          return this.robot.receive(new LeaveMessage(user, null, message._id))
+        }
 
         // Direct messages prepend bot's name so Hubot can `.respond`
         const startOfText = (message.msg.indexOf('@') === 0) ? 1 : 0
@@ -172,10 +178,12 @@ class RocketChatBotAdapter extends Adapter {
             attachment.link = `${config.url}${attachment.video_url}`
             attachment.type = 'video'
           }
+          this.robot.logger.debug('Message type AttachmentMessage')
           return this.robot.receive(new AttachmentMessage(user, attachment, message.msg, message._id))
         }
 
         // Standard text messages, receive as is
+        this.robot.logger.debug('Message type TextMessage')
         return this.robot.receive(new TextMessage(user, message.msg, message._id))
       })
   }
