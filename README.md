@@ -25,18 +25,22 @@
 
 [Hubot][hubot] adapter for [Rocket.Chat][rocketchat]!
 
-### IMPORTANT
+## Stable Versions
 
 > Please do not use in production until this message is removed.
 >
 > The `-develop` tag will also be removed from the package file.
 
 Version 2 of the adapter has been entirely refactored in Javascript ES6, for 
-[Hubot v3][hubot], using the new [Rocketchat Node.js SDK][[sdk] for Rocket.Chat
+[Hubot v3][hubot], using the new [Rocketchat Node.js SDK][sdk] for Rocket.Chat
 instances 0.60.0 onward.
 
 If you are using Hubot v2, please use the last release of v1:
 `hubot-rocketchat@1.0.12` on [the coffeescript branch][hubot-rocketchat-coffee]
+
+Older versions of the adaptor (v0.*) are also incompatible with more recent
+versions of Rocket.Chat (v0.35+). Please report an issue if you find specific 
+version mismatches and we'll update this document.
 
 ## Discussion
 
@@ -74,7 +78,7 @@ Note that for bots email, a common workaround to avoid creating multiple
 accounts is to use gmail +addresses, e.g. `youremail+botnam@gmail.com`.
 [See this issue for more](https://github.com/RocketChat/Rocket.Chat/issues/7125)
 
-### Existing install
+### Existing Install
 
 If you already have Hubot setup:
 
@@ -109,7 +113,7 @@ adapter.
 
 [More info in Hubot's own docs here](https://hubot.github.com/docs/)
 
-### Configuring your Bot
+### Configuring Your Bot
 
 In local development, the following can be set in an `.env` file. In production
 they would need to be set on server startup.
@@ -120,7 +124,7 @@ they would need to be set on server startup.
 | `HUBOT_ALIAS`          | An alternate name for the bot to respond to           |
 | `HUBOT_LOG_LEVEL`      | The minimum level of logs to output                   |
 | `HUBOT_HTTPD`          | If the bot needs to listen to or make HTTP requests   |
-| `HUBOT_ADAPTER`        | The platform adapter package to require on loading    |
+| `HUBOT_ADAPTER`**      | The platform adapter package to require on loading    |
 | `ROCKETCHAT_URL`*      | Local Rocketchat address (start before the bot)       |
 | `ROCKETCHAT_USER`*     | Name in the platform (bot user must be created first) |
 | `ROCKETCHAT_PASSWORD`* | Matching the credentials setup in Rocket.Chat         |
@@ -131,9 +135,11 @@ they would need to be set on server startup.
 
 `*` Required settings
 
+`**` Set to `rocketchat` to enable this adapter (or pass as launch argument)
+
  If you wish that your bot listen to all public rooms and all private rooms it
- is joined to let the env "ROCKETCHAT_ROOM" empty like in the example above and
- set the env "LISTEN_ON_ALL_PUBLIC" to true.
+ is joined to let the env `ROCKETCHAT_ROOM` empty like in the example above and
+ set the env `LISTEN_ON_ALL_PUBLIC` to true.
 
 The Rocket.Chat adapter implements the Rocket.Chat Node.js SDK to call server
 methods and selectively cache their results. For advanced usage, you may wish
@@ -218,6 +224,8 @@ We'd love to have your help improving this adapter. PR's very welcome :smile:
 Please see [our documentation on contributing][contributing], then
 [visit the issues][issues] to share your needs or ideas.
 
+### Development
+
 #### Docker
 
 First clone the source and then move into the directory.
@@ -242,17 +250,24 @@ docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
 
 #### Standard
 
-Installed in hubot you'd hop over into `node_modules`.
+In a Hubot instance once `hubot-rocketchat` is added by npm or yarn, you can
+replace the package with a development version directly:
 
-Delete the hubot-rocketchat folder.
+- `cd node_modules` from the bot's project root
+- `rm -rf hubot-rocketchat` to delete the published version
+- `git clone git@github.com:RocketChat/hubot-rocketchat.git` to add dev version
+- `cd hubot-rocketchat` move to dev path
+- `npm install` install dependencies
 
-Then clone the git repo.
+#### Linked
 
-```
-git clone git@github.com:RocketChat/hubot-rocketchat.git
-cd hubot-rocketchat
-npm install
-```
+Setting up a locally linked package is easier for continued development and/or
+using the same development version of the adapter in multiple bots.
+
+- Change directory to your development adapter path
+- `npm link` or `yarn link` to set the origin of the link
+- Change directory to your bot's project root
+- `npm link hubot-rocketchat` or `yarn link hubot-rocketchat` to create the link
 
 #### Important notes
 
