@@ -1,8 +1,9 @@
-const Adapter = require('hubot/src/adapter')
-const Response = require('hubot/src/response')
-const { TextMessage, EnterMessage, LeaveMessage } = require('hubot/src/message')
-const pkg = require('./package.json')
-const { driver } = require('rocketchat-sdk')
+'use strict'
+
+const Adapter = require.main.require('hubot/src/adapter')
+const Response = require.main.require('hubot/src/response')
+const { TextMessage, EnterMessage, LeaveMessage } = require.main.require('hubot/src/message')
+const { driver } = require('@rocket.chat/sdk')
 
 /** Take configs from environment settings or defaults */
 const config = {
@@ -44,6 +45,8 @@ class AttachmentMessage extends TextMessage {
 /** Main API for Hubot on Rocket.Chat */
 class RocketChatBotAdapter extends Adapter {
   run () {
+    this.robot.logger.info(`[startup] Rocket.Chat adapter in use`)
+    
     // Print logs with current configs
     this.startupLogs()
 
@@ -87,14 +90,14 @@ class RocketChatBotAdapter extends Adapter {
         throw err
       })
       .then(() => {
-        driver.reactToMessages(this.receive.bind(this)) // reactive callback
+        driver.reactToMessages(this.process.bind(this)) // reactive callback
         this.emit('connected') // tells hubot to load scripts
       })
   }
 
   /** Process every incoming message in subscription */
   // @todo: break into process components for unit testing
-  receive (err, message, msgOpts) {
+  process (err, message, msgOpts) {
     if (err) {
       this.robot.logger.error(`Unable to receive messages ${JSON.stringify(err)}`)
       throw err
@@ -255,9 +258,5 @@ class RocketChatBotAdapter extends Adapter {
   }
 }
 
-module.exports = {
-  use: (robot) => {
-    robot.logger.info(`[startup] Rocket.Chat adapter version ${pkg.version} in use`)
-    return new RocketChatBotAdapter(robot)
-  }
-}
+exports.use = (robot) => new RocketChatBotAdapter(robot)
+

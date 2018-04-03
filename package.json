@@ -42,7 +42,10 @@
 	},
 	"main": "index.js",
 	"dependencies": {
-		"hubot": "https://github.com/hubotio/hubot.git#v3.0.1",
-		"rocketchat-sdk": "^0.0.1"
+		"hubot": "3",
+		"@rocket.chat/sdk": "^0.0.2"
+	},
+	"peerDependencies": {
+		"hubot": "3"
 	}
 }
