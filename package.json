@@ -1,20 +1,28 @@
 {
 	"name": "hubot-rocketchat",
-	"version": "1.0.12",
+	"version": "2.0.0-development",
 	"author": {
 		"name": "Rocket.Chat",
 		"url": "https://rocket.chat/"
 	},
-	"contributors": [{
-		"name": "Sing Li",
-		"email": "sing.li@rocket.chat"
-	}, {
-		"name": "Gabriel Engel",
-		"email": "gabriel.engel@rocket.chat"
-	}, {
-		"name": "Aaron Ogle",
-		"email": "aaron.ogle@rocket.chat"
-	}],
+	"contributors": [
+		{
+			"name": "Sing Li",
+			"email": "sing.li@rocket.chat"
+		},
+		{
+			"name": "Gabriel Engel",
+			"email": "gabriel.engel@rocket.chat"
+		},
+		{
+			"name": "Aaron Ogle",
+			"email": "aaron.ogle@rocket.chat"
+		},
+		{
+			"name": "Tim Kinnane",
+			"email": "tim.kinnane@rocket.chat"
+		}
+	],
 	"description": "Hubot Rocket.Chat Adapter",
 	"keywords": [
 		"hubot",
@@ -32,14 +40,12 @@
 		"url": "https://github.com/RocketChat/hubot-rocketchat/issues",
 		"email": "support@rocket.chat"
 	},
-	"devDependencies": {
-		"coffee-script": "~1.12.6"
-	},
-	"main": "./src/rocketchat",
+	"main": "index.js",
 	"dependencies": {
-		"asteroid": "https://github.com/RocketChat/asteroid.git",
-		"parent-require": "^1.0.0",
-		"q": "^1.5.0",
-		"lru-cache": "~4.0.2"
+		"@rocket.chat/sdk": "^0.1.0",
+		"hubot": "3"
+	},
+	"peerDependencies": {
+		"hubot": "3"
 	}
 }

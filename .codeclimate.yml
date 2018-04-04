@@ -15,8 +15,6 @@
 engines:
 # to turn on an engine, add it here and set enabled to `true`
 # to turn off an engine, set enabled to `false` or remove it
-  coffeelint:
-    enabled: true
   eslint:
     enabled: true
   csslint:
@@ -31,7 +29,6 @@ engines:
 
 ratings:
   paths:
-  - "**.coffee"
   - "**.js"
   - "**.css"
 
