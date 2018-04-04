@@ -53,9 +53,6 @@ class RocketChatBotAdapter extends Adapter {
     // Overwrite Robot's response class with Rocket.Chat custom one
     this.robot.Response = RocketChatResponse
 
-    // Initialise internal memory for comparing message update timestamps
-    this.lastReadTime = new Date()
-
     // Use RocketChat Bot Driver to connect, login and setup subscriptions
     // Joins single or array of rooms by name from room setting (comma separated)
     // Reactive message subscription uses callback to process every stream update
@@ -90,137 +87,100 @@ class RocketChatBotAdapter extends Adapter {
         throw err
       })
       .then(() => {
-        driver.reactToMessages(this.process.bind(this)) // reactive callback
+        driver.respondToMessages(this.process.bind(this)) // reactive callback
         this.emit('connected') // tells hubot to load scripts
       })
   }
 
   /** Process every incoming message in subscription */
-  // @todo: break into process components for unit testing
-  process (err, message, msgOpts) {
-    if (err) {
-      this.robot.logger.error(`Unable to receive messages ${JSON.stringify(err)}`)
-      throw err
+  process (err, message, meta) {
+    if (err) throw err
+    // Prepare message type for Hubot to receive...
+    this.robot.logger.info('Filters passed, will receive message')
+
+    // Collect required attributes from message meta
+    const isDM = (meta.roomType == 'd')
+    const isLC = (meta.roomType == 'l')
+    const user = this.robot.brain.userForId(message.u._id, {
+      name: message.u.username,
+      alias: message.alias
+    })
+    user.roomID = message.rid
+    user.roomType = meta.roomType
+    user.room = meta.roomName || message.rid
+
+    // Room joins, receive without further detail
+    if (message.t === 'uj') {
+      this.robot.logger.debug('Message type EnterMessage')
+      return this.robot.receive(new EnterMessage(user, null, message._id))
     }
 
-    // Ignore bot's own messages
-    if (message.u._id === this.userId) return
-
-    // Ignore DMs if configured to
-    const isDM = msgOpts.roomType === 'd'
-    if (isDM && !config.respondToDM) return
-
-    // Ignore Livechat if configured to
-    const isLC = msgOpts.roomType === 'l'
-    if (isLC && !config.respondToLivechat) return
-
-    // Ignore messages in public rooms not joined by bot if configured to
-    if (!config.listenOnAllPublic && !isDM && !msgOpts.roomParticipant) return
-
-    // Set current time for comparison to incoming
-    let currentReadTime = new Date(message.ts.$date)
-
-    // Ignore edited messages if configured to
-    // unless it's newer than current read time (hasn't been seen before)
-    // @todo: test this logic, why not just return if edited and not responding
-    if (config.respondToEdited && typeof message.editedAt !== 'undefined') {
-      let edited = new Date(message.editedAt.$date)
-      if (edited > currentReadTime) currentReadTime = edited
+    // Room exit, receive without further detail
+    if (message.t === 'ul') {
+      this.robot.logger.debug('Message type LeaveMessage')
+      return this.robot.receive(new LeaveMessage(user, null, message._id))
     }
 
-    // Ignore messages in stream that aren't new
-    if (currentReadTime <= this.lastReadTime) return
+    // Direct messages prepend bot's name so Hubot can `.respond`
+    const startOfText = (message.msg.indexOf('@') === 0) ? 1 : 0
+    const robotIsNamed = message.msg.indexOf(this.robot.name) === startOfText || message.msg.indexOf(this.robot.alias) === startOfText
+    if ((isDM || isLC) && !robotIsNamed) message.msg = `${this.robot.name} ${message.msg}`
 
-    // At this point, message has passed checks and should be processed by Hubot
-    this.robot.logger.info(`Message receive callback ID ${message._id} at ${currentReadTime}`)
-    this.robot.logger.info(`[Incoming] ${message.u.username}: ${(message.file !== undefined) ? message.attachments[0].title : message.msg}`)
-    this.lastReadTime = currentReadTime
+    // Attachments, format properties for Hubot
+    if (Array.isArray(message.attachments) && message.attachments.length) {
+      let attachment = message.attachments[0]
+      if (attachment.image_url) {
+        attachment.link = `${config.url}${attachment.image_url}`
+        attachment.type = 'image'
+      } else if (attachment.audio_url) {
+        attachment.link = `${config.url}${attachment.audio_url}`
+        attachment.type = 'audio'
+      } else if (attachment.video_url) {
+        attachment.link = `${config.url}${attachment.video_url}`
+        attachment.type = 'video'
+      }
+      this.robot.logger.debug('Message type AttachmentMessage')
+      return this.robot.receive(new AttachmentMessage(user, attachment, message.msg, message._id))
+    }
 
-    // Get user from brain or store if unmet
-    // @todo: insert other user fields here, like role
-    // @todo: test alias field - why not u.alias
-    let user = this.robot.brain.userForId(message.u._id, { name: message.u.username, alias: message.alias })
-
-    // Set room properties depending on type and environment
-    let roomLookup = (!isDM && !isLC)
-      ? driver.getRoomName(message.rid)
-      : Promise.resolve(message.rid)
-    roomLookup
-      .then((rid) => {
-        this.robot.logger.debug(`Setting room ID for response as ${rid}`)
-        user.room = rid
-      })
-      .then(() => {
-        // Prepare message type for Hubot to receive...
-        this.robot.logger.info('Filters passed, will receive message')
-
-        // Room joins, receive without further detail
-        if (message.t === 'uj') {
-          this.robot.logger.debug('Message type EnterMessage')
-          return this.robot.receive(new EnterMessage(user, null, message._id))
-        }
-
-        // Room exit, receive without further detail
-        if (message.t === 'ul') {
-          this.robot.logger.debug('Message type LeaveMessage')
-          return this.robot.receive(new LeaveMessage(user, null, message._id))
-        }
-
-        // Direct messages prepend bot's name so Hubot can `.respond`
-        const startOfText = (message.msg.indexOf('@') === 0) ? 1 : 0
-        const robotIsNamed = message.msg.indexOf(this.robot.name) === startOfText || message.msg.indexOf(this.robot.alias) === startOfText
-        if ((isDM || isLC) && !robotIsNamed) message.msg = `${this.robot.name} ${message.msg}`
-
-        // Attachments, format properties for Hubot
-        if (typeof (message.attachments) !== 'undefined' && message.attachments.length) {
-          let attachment = message.attachments[0]
-          if (attachment.image_url) {
-            attachment.link = `${config.url}${attachment.image_url}`
-            attachment.type = 'image'
-          } else if (attachment.audio_url) {
-            attachment.link = `${config.url}${attachment.audio_url}`
-            attachment.type = 'audio'
-          } else if (attachment.video_url) {
-            attachment.link = `${config.url}${attachment.video_url}`
-            attachment.type = 'video'
-          }
-          this.robot.logger.debug('Message type AttachmentMessage')
-          return this.robot.receive(new AttachmentMessage(user, attachment, message.msg, message._id))
-        }
-
-        // Standard text messages, receive as is
-        let textMessage = new TextMessage(user, message.msg, message._id)
-        this.robot.logger.debug(`TextMessage: ${textMessage.toString()}`)
-        return this.robot.receive(textMessage)
-      })
+    // Standard text messages, receive as is
+    let textMessage = new TextMessage(user, message.msg, message._id)
+    this.robot.logger.debug(`TextMessage: ${textMessage.toString()}`)
+    return this.robot.receive(textMessage)
   }
 
-  /** Send messages to users */
+  /** Send messages to user adddressed in envelope */
   send (envelope, ...strings) {
-    return driver.sendMessage(strings, envelope.room)
+    return strings.map((text) => {
+      if (envelope.user.roomID) driver.sendToRoomId(text, envelope.user.roomID)
+      else driver.sendToRoom(text, envelope.room)
+    })
   }
 
-  /** Emote message to user */
+  /**
+   * Emote message to user
+   * @todo Improve this legacy method
+   */
   emote (envelope, ...strings) {
-    return driver.sendMessage(`_${strings}`, envelope.room)
+    return strings.map((text) => this.send(envelope, `_${text}_`))
   }
 
   /** Send custom message to user */
   customMessage (data) {
-    return driver.customMessage(data)
+    return driver.sendMessage(data)
   }
 
   /** Send DM to user */
   sendDirect (envelope, ...strings) {
-    return driver.sendDirectToUser(strings, envelope.user.name)
+    return strings.map((text) => driver.sendDirectToUser(text, envelope.user.name))
   }
 
   /** Reply to a user's message (mention them if not a DM) */
   reply (envelope, ...strings) {
     if (envelope.room.indexOf(envelope.user.id) === -1) {
-      strings.map((s) => `@${envelope.user.name} ${s}`)
-      return this.send(envelope, ...strings)
+      strings = strings.map((s) => `@${envelope.user.name} ${s}`)
     }
+    return this.send(envelope, ...strings)
   }
 
   /** Get a room ID via driver */
