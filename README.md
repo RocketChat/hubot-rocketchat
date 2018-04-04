@@ -34,16 +34,24 @@ instances 0.60.0 onward.
 If you are using Hubot v2, please use the last release of v1:
 `hubot-rocketchat@1.0.12` on [the coffeescript branch][hubot-rocketchat-coffee]
 
+<<<<<<< HEAD
 Older versions of the adaptor (v0.*) are also incompatible with more recent
 versions of Rocket.Chat (v0.35+). Please report an issue if you find specific 
 version mismatches and we'll update this document.
+=======
+Feel free to join us in the [#hubot](https://open.rocket.chat/channel/hubot) channel to discuss hubot, and any scripts you might be working on.
+>>>>>>> develop
 
 ## Discussion
 
 Feel free to join us in the [#bots][bots-channel] channel to discuss hubot and
 general bot support features in Rocket.Chat.
 
+<<<<<<< HEAD
 Our [#hubot][hubot-channel] channel is used for testing the internal hubot.
+=======
+If you are using Rocket.Chat  0.35.0 or earlier, please use v0.1.4 of the adapter.  (releases between 0.35.0 and 0.37.1 are not recommended for hubot operations)
+>>>>>>> develop
 
 #### NOTE
 
@@ -213,9 +221,157 @@ hubot:
     - 3001:8080
 ```
 
+<<<<<<< HEAD
 ## Contributions Welcome
 
 We'd love to have your help improving this adapter. PR's very welcome :smile:
+=======
+ If you wish that your bot listen to all public rooms and all private rooms he is joined to let the env "ROCKETCHAT_ROOM" empty like in the example above and set the env "LISTEN_ON_ALL_PUBLIC" to true.
+
+ Please take attention to some external scripts that are in the example above, some of them need your Google-API-Key in the docker compose file.
+
+### Alternative Node.js installation with [Node Version Manager](https://github.com/creationix/nvm) (nvm) in a local environment on Debian/Ubuntu
+
+ ```
+# adduser hubot
+# su - hubot
+$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+$ exit
+# su - hubot
+$ nvm install v4.8.5
+$ npm update -g
+$ npm install -g yo generator-hubot
+$ mkdir hubot
+$ cd hubot
+$ yo hubot (answer questions and use "rocketchat" as adapter)
+$ npm install coffee-script -save
+ ```
+ Make sure ~/hubot/bin/hubot is executable: `chmod 755 ./bin/hubot`
+
+ If you need a redis database: `apt install redis-server`
+
+ Set node version: `export NODE_VERSION=default`
+
+ If you want to start your hubot with [systemd](https://github.com/hubotio/hubot/blob/master/examples/hubot.service) use `nvm-exec`:
+
+ ```
+ExecStart=/home/hubot/.nvm/nvm-exec /home/hubot/hubot/bin/hubot --adapter rocketchat
+ ```
+ See EnvironmentFile directive for using environment variables in systemd units
+
+### Add adapter to hubot
+
+#### New install
+You can specify the adapter during setup.
+
+First you need to install hubot
+
+```
+npm install -g yo generator-hubot
+```
+
+Then you need to start the setup of the bot
+
+```
+mkdir myhubot
+cd myhubot
+yo hubot --adapter="rocketchat@1"
+```
+
+It'll ask you a few questions.
+
+Alternatively you can actually answer the questions in one command:
+
+```
+yo hubot --owner="OWNER <owner@example.com>" --name="bot" --description="Bot" --adapter="rocketchat@0.1"
+```
+
+Also be sure to remember the name you specify.  This is what the bot will respond to in Rocket.Chat.
+
+You will need to tell the adapter where your install is and what login information to use.
+
+```
+export ROCKETCHAT_ROOM=''
+export LISTEN_ON_ALL_PUBLIC=true
+export ROCKETCHAT_USER=bot
+export ROCKETCHAT_PASSWORD=bot
+export ROCKETCHAT_AUTH=password
+```
+
+Then start with: `bin/hubot -a rocketchat`
+
+[More Info Here](https://hubot.github.com/docs/)
+
+#### Existing install
+If you already have hubot setup you can add the adapter.
+
+By doing: `npm install hubot-rocketchat@1`
+
+You will need to tell the adapter where your install is and what login information to use.
+
+```
+export ROCKETCHAT_ROOM=''
+export LISTEN_ON_ALL_PUBLIC=true
+export ROCKETCHAT_USER=bot
+export ROCKETCHAT_PASSWORD=bot
+export ROCKETCHAT_AUTH=ldap
+```
+
+Then starting your bot specifying the adapter: `bin/hubot -a rocketchat`
+
+#### Configuration Options
+
+Here are all of the options you can specify to configure the bot.
+
+On Docker you use: `-e VAR=Value`
+
+Regular hubot via: `export VAR=Value` or add to pm2 etc
+
+Environment Variable | Description
+:---- | :----
+ROCKETCHAT_URL | the URL where Rocket.Chat is running, can be specified as `host:port` or `http://host:port`  or `https://host:port`. If you are using `https://`, you **MUST** setup websocket pass-through on your reverse proxy (NGINX, and so on) with a valid certificate (not self-signed).  Directly accessing Rocket.Chat without a reverse proxy via `https://` is not possible.
+ROCKETCHAT_USER | the bot user's name. It must be a registered user on your Rocket.Chat server, and the user must be granted `bot` role via Rocket.Chat's administrator's panel  (note that this will also be the name that you can summon the bot with)
+ROCKETCHAT_PASSWORD | the bot user's password
+ROCKETCHAT_AUTH | defaults to 'password' if undefined, or set to 'ldap' if your use LDAP accounts for bots.
+ROCKETCHAT_ROOM | the channel/channels names the bot should listen to message from.  This can be comma separated list.
+LISTEN_ON_ALL_PUBLIC | if 'true' then bot will listen and respond to messages from all public channels, as well as respond to direct messages. Default to 'false'. ROCKETCHAT_ROOM should be set to empty (with `ROCKETCHAT_ROOM=''` ) when using `LISTEN_ON_ALL_PUBLIC`. *IMPORTANT NOTE*:  This option also allows the bot to listen and respond to messages _from all newly created private groups_ that the bot's user has been added as a member.
+RESPOND_TO_DM | if 'true' then bot will respond to direct messages. When setting the option to 'true', be sure to also set ROCKETCHAT_ROOM or LISTEN_ON_ALL_PUBLIC.  Default is 'false'.
+RESPOND_TO_EDITED | if 'true' then bot will respond to edited messages. Default is 'false'.
+ROOM_ID_CACHE_SIZE | The maximum number of room IDs to cache. You can increase this if your bot usually sends messages to a large number of different rooms. Default value: 10
+DM_ROOM_ID_CACHE_SIZE | The maximum number of Direct Message room IDs to cache. You can increase this if your bot usually sends a large number of Direct Messages. Default value: 100
+ROOM_ID_CACHE_MAX_AGE | Room IDs and DM Room IDS are cached for this number of seconds. You can increase this value to improve performance in certain scenarios. Default value: 300
+BOT_NAME | ** Name of the bot.  This is what it responds to
+EXTERNAL_SCRIPTS | ** These are the npm modules it will add to hubot.
+HUBOT_LOG_LEVEL | hubot log level, string [debug|info|warning|error], default: info 
+
+** - Docker image only.
+##### Configuring the Bot to listen and respond to direct messages plus all new public channels and private groups
+
+This is a common configuration for Rocket.Chat bot installations.
+
+Use the following options:
+
+`LISTEN_ON_ALL_PUBLIC=true`  and `ROCKETCHAT_ROOM=''`  and *do not* specify `RESPOND_TO_DM`
+
+Be aware you *must* add the bot's user as a member of the new private group(s) before it will respond.
+
+### Verify your bot is working
+Try:
+```
+rocketbot ping
+```
+
+And:
+```
+rocketbot help
+```
+The example bot under `scripts` directory responds to:
+```
+rocketbot report status
+```
+
+## Developers
+>>>>>>> develop
 
 Please see [our documentation on contributing][contributing], then
 [visit the issues][issues] to share your needs or ideas.
