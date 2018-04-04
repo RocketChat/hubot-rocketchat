@@ -27,10 +27,6 @@
 
 ## Stable Versions
 
-> Please do not use in production until this message is removed.
->
-> The `-develop` tag will also be removed from the package file.
-
 Version 2 of the adapter has been entirely refactored in Javascript ES6, for 
 [Hubot v3][hubot], using the new [Rocketchat Node.js SDK][sdk] for Rocket.Chat
 instances 0.60.0 onward.
