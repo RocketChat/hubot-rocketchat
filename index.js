@@ -15,7 +15,7 @@ const config = {
   respondToDM: (process.env.RESPOND_TO_DM || 'false').toLowerCase() === 'true',
   respondToLivechat: (process.env.RESPOND_TO_LIVECHAT || 'false').toLowerCase() === 'true',
   respondToEdited: (process.env.RESPOND_TO_EDITED || 'false').toLowerCase() === 'true',
-  sslEnabled: false
+  sslEnabled: (process.env.ROCKETCHAT_USESSL || 'false').toLowerCase() === 'true'
 }
 
 /** Extend default response with custom adapter methods */
