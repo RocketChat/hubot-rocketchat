@@ -13,18 +13,26 @@ Feel free to join us in the [#hubot](https://open.rocket.chat/channel/hubot) cha
 
 ## Important
 
-**BREAKING CHANGES:** v2.0.0 contains major breaking changes. Starting with this version, only [Hubot v3]() will be supported. You should only use it with [Rocket.Chat Server version 0.63.0]() or higher.  This adapter no longer support CoffeeScript - all hubot scripts created with CoffeeScript must be ported / rewritten to Javascript for proper operation.  Yeoman generator support is discontinued with this version, you should start your project with our [boilerplate](). [NodeJS 8]() or later is required. And the latest ES6 syntax, including async-await, is fully supported.
+**BREAKING CHANGES:** v2.x.x contains major breaking changes. Starting with this version:
+* CoffeeScript BOTs will no longer be supported, all new bot scripts should be written in NodeJS 8 compatible JavaScript
+* Only [Hubot v3](https://github.com/hubotio/hubot/tree/v3) will be supported
+* you should only use [Rocket.Chat Server version 0.63.0](https://github.com/RocketChat/Rocket.Chat/releases/tag/0.63.0) or higher
+* Yeoman generator support is discontinued,  you should start your project with our [hubot v3 boilerplate](https://github.com/RocketChat/hubot-rocketchat-boilerplate)
+* [NodeJS 8](https://nodejs.org/) or later is required for operations
+* The latest ES6 syntax in NodeJS 8, including the popular async-await, is fully supported
 
-v1.0.x versions of the adapter is only compatible with 0.37.1 and higher of Rocket.Chat Server.
+v1.x.x versions of the adapter is only compatible with 0.37.1 and higher of Rocket.Chat Server.  Yes, you should be able to continue using v1.x.x adapter and CoffeeScript bots with the most up-to-date version of the server.
 
-If you are using Rocket.Chat  0.35.0 or earlier, please use v0.1.4 of the adapter.  (releases between 0.35.0 and 0.37.1 are not recommended for hubot operations)
+If you are using Rocket.Chat 0.35.0 or earlier, please use v0.1.4 of the adapter.  (releases between 0.35.0 and 0.37.1 are not recommended for hubot operations)
 
 #### NOTE
-If you want to integrate Rocket.Chat with GitHub or GitLab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.Chat.Ops) project before starting. We already have many scripts that add webhook events and access GitHub/GitLab APIs. You can easily extend these scripts for your custom application.
+If you want to integrate Rocket.Chat with GitHub or GitLab.  Make sure you visit the [Rocket.Chat.Ops](https://github.com/RocketChat/Rocket.-Chat.Ops) project before starting. We already have many scripts that add webhook events and access GitHub/GitLab APIs. You can easily extend these scripts for your custom application.
 
-### For v2.x.x of the Adapter
+### For v2.x.x of the Adapter  (Hubot v3 and ES6 support)
 
-If you are using Hubot 2.x and v1.x.x or v0.x.x of the adapter, please see [instructions for v1.x.x of the adapter]().
+If you are writing CoffeeScript bots, need Hubot 2.x and v1.x.x or v0.x.x of the adapter, please see [instructions for v1.x.x of the adapter](#For-v1.x.x-and-v0.x.x-of-the-Adatper).
+
+The following instructions are ONLY for v2.x.x of the adapter.
 
 #### Getting your bot connected to Rocket.Chat
 
