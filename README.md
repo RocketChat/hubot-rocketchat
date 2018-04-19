@@ -139,6 +139,7 @@ they would need to be set on server startup.
 | `LISTEN_ON_ALL_PUBLIC` | Whether the bot should be listening everywhere        |
 | `RESPOND_TO_DM`        | If the bot can respond privately or only in the open  |
 | `RESPOND_TO_EDITED`    | If the bot should reply / re-reply to edited messages |
+| `RESPOND_TO_LIVECHAT`  | If the bot should respond in livechat rooms           |
 
 `*` Required settings
 
