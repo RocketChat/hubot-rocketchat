@@ -28,7 +28,7 @@ USER hubot
 
 RUN cd /home/hubot/node_modules/hubot-rocketchat && \
 	npm install && \
-	coffee -c /home/hubot/node_modules/hubot-rocketchat/src/*.coffee && \
+	#coffee -c /home/hubot/node_modules/hubot-rocketchat/src/*.coffee && \
 	cd /home/hubot
 
 CMD node -e "console.log(JSON.stringify('$EXTERNAL_SCRIPTS'.split(',')))" > external-scripts.json && \
