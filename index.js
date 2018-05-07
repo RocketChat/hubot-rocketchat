@@ -3,20 +3,9 @@
 const Adapter = require.main.require('hubot/src/adapter')
 const Response = require.main.require('hubot/src/response')
 const { TextMessage, EnterMessage, LeaveMessage } = require.main.require('hubot/src/message')
-const { driver } = require('@rocket.chat/sdk')
+const { driver, api, methodCache, settings } = require('@rocket.chat/sdk')
 
-/** Take configs from environment settings or defaults */
-const config = {
-  url: process.env.ROCKETCHAT_URL || 'localhost:3000',
-  room: process.env.ROCKETCHAT_ROOM || 'GENERAL',
-  user: process.env.ROCKETCHAT_USER || 'hubot',
-  pass: process.env.ROCKETCHAT_PASSWORD || 'password',
-  listenOnAllPublic: (process.env.LISTEN_ON_ALL_PUBLIC || 'false').toLowerCase() === 'true',
-  respondToDM: (process.env.RESPOND_TO_DM || 'false').toLowerCase() === 'true',
-  respondToLivechat: (process.env.RESPOND_TO_LIVECHAT || 'false').toLowerCase() === 'true',
-  respondToEdited: (process.env.RESPOND_TO_EDITED || 'false').toLowerCase() === 'true',
-  sslEnabled: (process.env.ROCKETCHAT_USESSL || 'false').toLowerCase() === 'true'
-}
+console.log(settings)
 
 /** Extend default response with custom adapter methods */
 class RocketChatResponse extends Response {
@@ -46,9 +35,21 @@ class AttachmentMessage extends TextMessage {
 class RocketChatBotAdapter extends Adapter {
   run () {
     this.robot.logger.info(`[startup] Rocket.Chat adapter in use`)
-    
+
+    // Make SDK modules available to scripts, via `adapter.`
+    this.driver = driver
+    this.methodCache = methodCache
+    this.api = api
+    this.settings = settings
+
     // Print logs with current configs
-    this.startupLogs()
+    this.robot.logger.info(`[startup] Respond to name: ${this.robot.name}`)
+    this.robot.alias = (this.robot.name === settings.username || this.robot.alias)
+      ? this.robot.alias
+      : settings.username
+    if (this.robot.alias) {
+      this.robot.logger.info(`[startup] Respond to alias: ${this.robot.alias}`)
+    }
 
     // Overwrite Robot's response class with Rocket.Chat custom one
     this.robot.Response = RocketChatResponse
@@ -57,29 +58,19 @@ class RocketChatBotAdapter extends Adapter {
     // Joins single or array of rooms by name from room setting (comma separated)
     // Reactive message subscription uses callback to process every stream update
     driver.useLog(this.robot.logger)
-    driver.connect({
-      host: config.url,
-      useSsl: config.sslEnabled
-    })
+    driver.connect()
       .catch((err) => {
         this.robot.logger.error(this.robot.logger.error(`Unable to connect: ${JSON.stringify(err)}`))
         throw err
       })
       .then(() => {
-        return driver.login({ username: config.user, password: config.pass })
+        return driver.login()
       })
       .catch((err) => {
         this.robot.logger.error(this.robot.logger.error(`Unable to login: ${JSON.stringify(err)}`))
         throw err
-      }).then((_id) => {
-        this.userId = _id
-        return driver.joinRooms(config.room.split(',').filter((room) => (room !== '')))
       })
-      .catch((err) => {
-        this.robot.logger.error(this.robot.logger.error(`Unable to join rooms: ${JSON.stringify(err)}`))
-        throw err
-      })
-      .then((joined) => {
+      .then(() => {
         return driver.subscribeToMessages()
       })
       .catch((err) => {
@@ -99,8 +90,8 @@ class RocketChatBotAdapter extends Adapter {
     this.robot.logger.info('Filters passed, will receive message')
 
     // Collect required attributes from message meta
-    const isDM = (meta.roomType == 'd')
-    const isLC = (meta.roomType == 'l')
+    const isDM = (meta.roomType === 'd')
+    const isLC = (meta.roomType === 'l')
     const user = this.robot.brain.userForId(message.u._id, {
       name: message.u.username,
       alias: message.alias
@@ -130,13 +121,13 @@ class RocketChatBotAdapter extends Adapter {
     if (Array.isArray(message.attachments) && message.attachments.length) {
       let attachment = message.attachments[0]
       if (attachment.image_url) {
-        attachment.link = `${config.url}${attachment.image_url}`
+        attachment.link = `${settings.host}${attachment.image_url}`
         attachment.type = 'image'
       } else if (attachment.audio_url) {
-        attachment.link = `${config.url}${attachment.audio_url}`
+        attachment.link = `${settings.host}${attachment.audio_url}`
         attachment.type = 'audio'
       } else if (attachment.video_url) {
-        attachment.link = `${config.url}${attachment.video_url}`
+        attachment.link = `${settings.host}${attachment.video_url}`
         attachment.type = 'video'
       }
       this.robot.logger.debug('Message type AttachmentMessage')
@@ -149,7 +140,7 @@ class RocketChatBotAdapter extends Adapter {
     return this.robot.receive(textMessage)
   }
 
-  /** Send messages to user adddressed in envelope */
+  /** Send messages to user addressed in envelope */
   send (envelope, ...strings) {
     return strings.map((text) => {
       if (envelope.user.roomID) driver.sendToRoomId(text, envelope.user.roomID)
@@ -192,31 +183,6 @@ class RocketChatBotAdapter extends Adapter {
   callMethod (method, ...args) {
     return driver.callMethod(method, args)
   }
-
-  /** Starting config print outs, split-out from logic for easy reading */
-  startupLogs () {
-    this.robot.logger.info(`[startup] Respond to the name: ${this.robot.name}`)
-    this.robot.alias = (this.robot.name === config.user || this.robot.alias) ? this.robot.alias : config.user
-
-    if (this.robot.alias) {
-      this.robot.logger.info(`I will also respond to my Rocket.Chat username as an alias ${this.robot.alias}`)
-    }
-
-    if (!process.env.ROCKETCHAT_URL) {
-      this.robot.logger.warning(`No services ROCKETCHAT_URL provided to Hubot, using ${config.url}`)
-    }
-
-    if (!process.env.ROCKETCHAT_ROOM) {
-      this.robot.logger.warning(`No services ROCKETCHAT_ROOM provided to Hubot, using ${config.room}`)
-    }
-
-    if (!process.env.ROCKETCHAT_USER) {
-      this.robot.logger.warning(`No services ROCKETCHAT_USER provided to Hubot, using ${config.user}`)
-    }
-
-    this.robot.logger.info(`[startup] Rooms specified: ${config.room}`)
-  }
 }
 
 exports.use = (robot) => new RocketChatBotAdapter(robot)
-
