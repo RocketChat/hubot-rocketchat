@@ -5,8 +5,6 @@ const Response = require.main.require('hubot/src/response')
 const { TextMessage, EnterMessage, LeaveMessage } = require.main.require('hubot/src/message')
 const { driver, api, methodCache, settings } = require('@rocket.chat/sdk')
 
-console.log(settings)
-
 /** Extend default response with custom adapter methods */
 class RocketChatResponse extends Response {
   sendDirect (...strings) {
