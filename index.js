@@ -141,7 +141,7 @@ class RocketChatBotAdapter extends Adapter {
   /** Send messages to user addressed in envelope */
   send (envelope, ...strings) {
     return strings.map((text) => {
-      if (envelope.user.roomID) driver.sendToRoomId(text, envelope.user.roomID)
+      if (envelope.user && envelope.user.roomID) driver.sendToRoomId(text, envelope.user.roomID)
       else driver.sendToRoom(text, envelope.room)
     })
   }
