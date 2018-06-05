@@ -34,8 +34,6 @@ EOF
 
 echo "Your Rocket.Chat Hubot Docker Container is now starting. Please wait...."
 
-cd /home/hubot/
-npm install --no-audit
 
 #Set log level to info by default if it has not been set
 if [[ -z "${HUBOT_LOG_LEVEL}" ]]; then
@@ -86,6 +84,10 @@ else
 	export HUBOT_NAME=${BOT_NAME}
 fi
 
+#Install any required deps.
+cd /home/hubot/
+npm install --no-audit
+
 #Check for BOT_ALIAS or HUBOT_ALIAS.
 if [[ -z "${BOT_ALIAS}" ]]; then
         if [[ -z "${HUBOT_ALIAS}" ]]; then
@@ -97,6 +99,8 @@ if [[ -z "${BOT_ALIAS}" ]]; then
 else
         export HUBOT_ALIAS=${BOT_ALIAS}
 fi
+
+
 
 if [[ -z "${EXTERNAL_SCRIPTS}" ]]; then
         echo "-------------"
