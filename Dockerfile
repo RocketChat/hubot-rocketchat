@@ -5,9 +5,9 @@ ENV npm_config_loglevel=error
 
 USER root
 
-COPY bin/hubot /home/hubot/bin/
-COPY scripts /home/hubot/scripts
-COPY package.json /home/hubot/
+COPY .docker/bin/hubot /home/hubot/bin/
+COPY .docker/scripts /home/hubot/scripts
+COPY .docker/package.json /home/hubot/
 
 RUN apk add --update --no-cache \
     git && \
