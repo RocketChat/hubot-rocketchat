@@ -1,36 +1,32 @@
-FROM node:4.8.3
-MAINTAINER Rocket.Chat Team <buildmaster@rocket.chat>
+FROM node:8.11.2-alpine
+LABEL maintainer="Rocket.Chat Team <buildmaster@rocket.chat>"
 
-RUN npm install -g coffee-script yo generator-hubot  &&  \
-	useradd hubot -m
+ENV npm_config_loglevel=error
 
-USER hubot
-
-WORKDIR /home/hubot
-
-ENV BOT_NAME "rocketbot"
-ENV BOT_OWNER "No owner specified"
-ENV BOT_DESC "Hubot with rocketbot adapter"
-
-ENV EXTERNAL_SCRIPTS=hubot-diagnostics,hubot-help,hubot-google-images,hubot-google-translate,hubot-pugme,hubot-maps,hubot-rules,hubot-shipit
-
-RUN yo hubot --owner="$BOT_OWNER" --name="$BOT_NAME" --description="$BOT_DESC" --defaults && \
-	sed -i /heroku/d ./external-scripts.json && \
-	sed -i /redis-brain/d ./external-scripts.json && \
-	npm install hubot-scripts
-
-ADD . /home/hubot/node_modules/hubot-rocketchat
-
-# hack added to get around owner issue: https://github.com/docker/docker/issues/6119
 USER root
-RUN chown hubot:hubot -R /home/hubot/node_modules/hubot-rocketchat
+
+COPY bin/hubot /home/hubot/bin/
+COPY scripts /home/hubot/scripts
+COPY package.json /home/hubot/
+
+RUN apk add --update --no-cache \
+    git && \
+    adduser -S hubot && \
+    addgroup -S hubot && \
+    touch ~/.bashrc && \
+    npm i -g npm@latest && \
+    chown -R hubot:hubot /home/hubot/
+
+WORKDIR /home/hubot/
+
+ENV BOT_OWNER "No owner specified"
+ENV BOT_DESC "Hubot with the Rocket.Chat adapter"
+
+#ENV EXTERNAL_SCRIPTS=hubot-diagnostics,hubot-google-images,hubot-google-translate,hubot-pugme,hubot-maps,hubot-rules,hubot-shipit
+
 USER hubot
 
-RUN cd /home/hubot/node_modules/hubot-rocketchat && \
-	npm install && \
-	#coffee -c /home/hubot/node_modules/hubot-rocketchat/src/*.coffee && \
-	cd /home/hubot
 
-CMD node -e "console.log(JSON.stringify('$EXTERNAL_SCRIPTS'.split(',')))" > external-scripts.json && \
-	npm install $(node -e "console.log('$EXTERNAL_SCRIPTS'.split(',').join(' '))") && \
-	bin/hubot -n $BOT_NAME -a rocketchat
+RUN npm install 
+
+CMD ["/bin/ash", "/home/hubot/bin/hubot"]

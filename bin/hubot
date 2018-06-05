@@ -1,0 +1,137 @@
+#!/bin/bash
+
+#Stop NPM from complaining about useless stuff.
+export npm_config_loglevel=error
+
+#This function is used to listen for SIGINT/SIGTERM so the container can be killed with CTRL+C
+#Also prevents the docker reboot bug where the container freezes for 30-60 seconds on reboot.
+asyncRun() {
+    "$@" &
+    pid="$!"
+    trap "echo 'Stopping PID $pid'; kill -SIGTERM $pid" SIGINT SIGTERM
+
+    # A signal emitted while waiting will make the wait command return code > 128
+    # Let's wrap it in a loop that doesn't end before the process is indeed stopped
+    while kill -0 $pid > /dev/null 2>&1; do
+        wait
+    done
+}
+
+cat << EOF
+██████╗  ██████╗  ██████╗██╗  ██╗███████╗████████╗    ██████╗██╗  ██╗ █████╗ ████████╗
+██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██╔════╝╚══██╔══╝   ██╔════╝██║  ██║██╔══██╗╚══██╔══╝
+██████╔╝██║   ██║██║     █████╔╝ █████╗     ██║      ██║     ███████║███████║   ██║   
+██╔══██╗██║   ██║██║     ██╔═██╗ ██╔══╝     ██║      ██║     ██╔══██║██╔══██║   ██║   
+██║  ██║╚██████╔╝╚██████╗██║  ██╗███████╗   ██║   ██╗╚██████╗██║  ██║██║  ██║   ██║   
+╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
+                ██╗  ██╗██╗   ██╗██████╗  ██████╗ ████████╗
+                ██║  ██║██║   ██║██╔══██╗██╔═══██╗╚══██╔══╝
+                ███████║██║   ██║██████╔╝██║   ██║   ██║   
+                ██╔══██║██║   ██║██╔══██╗██║   ██║   ██║   
+                ██║  ██║╚██████╔╝██████╔╝╚██████╔╝   ██║   
+                ╚═╝  ╚═╝ ╚═════╝ ╚═════╝  ╚═════╝    ╚═╝   
+EOF
+
+echo "Your Rocket.Chat Hubot Docker Container is now starting. Please wait...."
+
+cd /home/hubot/
+npm install --no-audit
+#Check if the Rocket.Chat URL has been set.
+if [[ -z "${ROCKETCHAT_URL}" ]]; then
+	echo "-------------"
+	echo "The ROCKETCHAT_URL Environment Variable has not been set. Set this to your Rocket.Chat Server URL"
+	echo "Example: ROCKETCHAT_URL=https://open.rocket.chat"
+	echo "Exiting...."
+        echo "-------------"
+	exit 1
+fi
+
+#Check if the Rocket.Chat User has been set.
+if [[ -z "${ROCKETCHAT_USER}" ]]; then
+        echo "-------------"
+        echo "ROCKETCHAT_USER Environment Variable has not been set. Set this to the username on your Rocket.Chat server that the bot will log in with."
+	echo "Example: ROCKETCHAT_USER=rocketbot"
+	echo "Exiting...."
+        echo "-------------"
+	exit 1
+fi
+
+#Check if the Rocket.Chat Password has been set for the user above
+if [[ -z "${ROCKETCHAT_PASSWORD}" ]]; then
+        echo "-------------"
+        echo "The ROCKETCHAT_PASSWORD Environment Variable has not been set. Set this to the password for the user specified in the ROCKETCHAT_USER environment variable."
+	echo "Example: ROCKETCHAT_PASSWORD=supersecret"
+	echo "Exiting...."
+        echo "-------------"
+	exit 1
+
+fi
+
+#Check for BOT_NAME or HUBOT_NAME.
+if [[ -z "${BOT_NAME}" ]]; then 
+	if [[ -z "${HUBOT_NAME}" ]]; then
+	        echo "-------------"
+		echo "ERROR: The BOT_NAME Environment Variable has not been set. Set this to the name your bot will respond too."
+		echo "Exiting...."
+	        echo "-------------"
+		exit 1
+	fi
+else 
+	export HUBOT_NAME=${BOT_NAME}
+fi
+
+#Check for BOT_ALIAS or HUBOT_ALIAS.
+if [[ -z "${BOT_ALIAS}" ]]; then
+        if [[ -z "${HUBOT_ALIAS}" ]]; then
+	        echo "-------------"
+                echo "WARN: BOT_ALIAS has not been set. This is used to call your bot by a 'short name'."
+	 	echo "WARN: For example if the following are set: BOT_NAME=rocketbot and BOT_ALIAS='!' - Your bot will respond to both '@rocketbot help' and '!help'"
+	        echo "-------------"
+        fi
+else
+        export HUBOT_ALIAS=${BOT_ALIAS}
+fi
+
+if [[ -z "${EXTERNAL_SCRIPTS}" ]]; then
+        echo "-------------"
+	echo "WARN: The EXTERNAL_SCRIPTS environment variable has not been set."
+	echo "WARN: This means no additional hubot scripts will be loaded except for whatever is bundled by default with this container"
+        echo "-------------"
+else 
+	npm i -S $(node -e "console.log('$EXTERNAL_SCRIPTS'.split(',').join(' '))") --no-audit
+	node -e "console.log(JSON.stringify('$EXTERNAL_SCRIPTS'.split(',')))" > /home/hubot/external-scripts.json
+fi
+
+if [[ -z "${ROCKETCHAT_AUTH}" ]]; then
+        echo "-------------"
+	echo "WARN: The ROCKETCHAT_AUTH environment variable has not been set. The default is ROCKETCHAT_AUTH=password"
+	echo "WARN: If the bot is using a LDAP account to log into your Rocket.Chat instance and are seeing issues, try setting this to ROCKETCHAT_AUTH=ldap"
+        echo "-------------"
+	export ROCKETCHAT_AUTH=password
+fi
+
+if [[ -z "${RESPOND_TO_DM}" ]]; then
+        echo "-------------"
+        echo "INFO: The RESPOND_TO_DM environment variable has not been set. This bot will not respond to Direct/Private messages"
+	echo "INFO: Set RESPOND_TO_DM=true if you want your bot to respond to direct/private messages."
+        echo "-------------"
+fi
+
+if [[ -z "${RESPOND_TO_EDITED}" ]]; then
+        echo "-------------"
+        echo "INFO: The RESPOND_TO_EDITED environment varialbe is not set. The default is RESPOND_TO_EDITED=false"
+	echo "INFO: Set RESPOND_TO_EDITED=true if you want this bot to respond to messages after they have been edited"
+        echo "-------------"
+fi
+
+if [[ -z "${RESPOND_TO_LIVECHAT}" ]]; then
+        echo "-------------"
+        echo "INFO: The RESPOND_TO_LIVECHAT environment varialbe is not set. The default is RESPOND_TO_LIVECHAT=false"
+	echo "INFO: This means the bot will not respond in a LiveChat conversation"
+        echo "-------------"
+fi
+set -e
+
+export PATH="node_modules/.bin:node_modules/hubot/node_modules/.bin:$PATH"
+
+asyncRun node node_modules/hubot/bin/hubot.js -a rocketchat "$@"

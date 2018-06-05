@@ -43,9 +43,12 @@
 	"main": "index.js",
 	"dependencies": {
 		"@rocket.chat/sdk": "^0.2.1",
-		"hubot": "3"
+		"coffeescript": "1.6.3",
+		"hubot": "3.0.1",
+		"hubot-help": "1.0.1",
+		"hubot-rocketchat": "rocketchat/hubot-rocketchat"
 	},
 	"peerDependencies": {
-		"hubot": "3"
+		"hubot": "3.0.1"
 	}
 }
