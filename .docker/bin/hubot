@@ -36,6 +36,12 @@ echo "Your Rocket.Chat Hubot Docker Container is now starting. Please wait...."
 
 cd /home/hubot/
 npm install --no-audit
+
+#Set log level to info by default if it has not been set
+if [[ -z "${HUBOT_LOG_LEVEL}" ]]; then
+	echo "INFO: HUBOT_LOG_LEVEL not set. Using HUBOT_LOG_LEVEL=info as the default"
+	export HUBOT_LOG_LEVEL=info
+fi
 #Check if the Rocket.Chat URL has been set.
 if [[ -z "${ROCKETCHAT_URL}" ]]; then
 	echo "-------------"
