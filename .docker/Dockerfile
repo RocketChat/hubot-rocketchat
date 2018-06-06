@@ -5,16 +5,17 @@ ENV npm_config_loglevel=error
 
 USER root
 
-COPY .docker/bin/hubot /home/hubot/bin/
-COPY .docker/scripts /home/hubot/scripts
-COPY .docker/package.json /home/hubot/
+COPY bin/hubot /home/hubot/bin/
+COPY package.json /home/hubot/
 
 RUN apk add --update --no-cache \
     git && \
     adduser -S hubot && \
     addgroup -S hubot && \
     touch ~/.bashrc && \
-    npm i -g npm@latest && \
+    npm install --global npm@latest && \
+    npm install -g coffee-script && \
+    mkdir /home/hubot/scripts/ && \
     chown -R hubot:hubot /home/hubot/
 
 WORKDIR /home/hubot/
@@ -27,6 +28,8 @@ ENV BOT_DESC "Hubot with the Rocket.Chat adapter"
 USER hubot
 
 
-RUN npm install 
+RUN npm install --no-audit
+
+VOLUME ["/home/hubot/scripts"]
 
 CMD ["/bin/ash", "/home/hubot/bin/hubot"]

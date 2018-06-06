@@ -46,7 +46,8 @@
   "main": "index.js",
   "dependencies": {
     "@rocket.chat/sdk": "^0.2.1",
-    "hubot": "3"
+    "hubot": "3",
+    "hubot-diagnostics": "0.0.2"
   },
   "peerDependencies": {
     "hubot": "3"
