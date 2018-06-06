@@ -88,6 +88,13 @@ fi
 #Install any required deps.
 cd /home/hubot/
 
+if [[ -z "${NPM_REGISTRY}" ]]; then
+        echo "INFO: The NPM_REGISTRY environment variable has not been set. Using npmjs as the default."
+else 
+        echo "INFO: The NPM_REGISTRY environment variable is $NPM_REGISTRY. NPM will use this registry to pull packages from."
+        npm set registry $NPM_REGISTRY
+fi
+
 echo "INFO: Attempting to install this containers dependancies"
 npm install --no-audit
 
@@ -112,8 +119,6 @@ if [[ "${ROCKETCHAT_BOT_DIAGNOSTICS}" == 'true' ]]; then
                 #If we have specified some EXTERNAL_SCRIPTS then append the diagnostics package to the end of them
 		EXTERNAL_SCRIPTS+=,hubot-rocketchat-diagnostics
 	fi
-	echo $EXTERNAL_SCRIPTS
-	exit
 fi
 
 if [[ -z "${EXTERNAL_SCRIPTS}" ]]; then
