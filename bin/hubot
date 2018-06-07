@@ -95,6 +95,7 @@ else
         npm set registry $NPM_REGISTRY
 fi
 
+#This happens here as well as during the container build process. There seems to be a bug where sometimes hubot misses 1 or 2 deps. This is insurance for that. Some people also mount node_modules externally and this will ensure that the base deps are there in those cases.
 echo "INFO: Attempting to install this containers dependancies"
 npm install --no-audit
 
