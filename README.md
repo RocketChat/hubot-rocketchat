@@ -1,9 +1,9 @@
-![Rocket.Chat logo](https://rocket.chat/images/logo/logo-dark.svg?v3)
+![Rocket.Chat logo](https://rocket.chat/images/default/logo--dark.svg)
 
 [![Rocket.Chat](https://open.rocket.chat/api/v1/shield.svg?type=channel&name=Rocket.Chat&channel=hubot)](https://open.rocket.chat/channel/hubot)
 [![Test Coverage](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/coverage.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat/coverage)
 [![Code Climate](https://codeclimate.com/github/RocketChat/hubot-rocketchat/badges/gpa.svg)](https://codeclimate.com/github/RocketChat/hubot-rocketchat)
-[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/RocketChat/Rocket.Chat/raw/master/LICENSE)
+[![MIT License](https://camo.githubusercontent.com/3ccf4c50a1576b0dd30b286717451fa56b783512/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4c6963656e73652d4d49542d79656c6c6f772e737667)](https://github.com/RocketChat/Rocket.Chat/raw/master/LICENSE)
 
 # hubot-rocketchat
 
@@ -135,15 +135,14 @@ relevant to Hubot. It has some additional configs, [documented here][rcsdk-env].
 | Env variable           | Description                                           |
 | ---------------------- | ----------------------------------------------------- |
 | **Hubot**		           | A subset of relevant [Hubot env vars][hubot-env]     |
-| `HUBOT_ADAPTER`        | Set to `rocketchat` (or pass as launch argument)      |
-| `HUBOT_NAME`           | The programmatic name for listeners                   |
-| `HUBOT_ALIAS`          | An alternate name for the bot to respond to           |
-| `HUBOT_LOG_LEVEL`      | The minimum level of logs to output                   |
+| `BOT_NAME` / `HUBOT_NAME`   | The programmatic name for listeners                   |
+| `BOT_ALIAS` / `HUBOT_ALIAS`          | An alternate name for the bot to respond to           |
+| `HUBOT_LOG_LEVEL`      | Verbosity of the bots console logs. Can be **info, warn or error**                 |
 | `HUBOT_HTTPD`          | If the bot needs to listen to or make HTTP requests   |
 | **Rocket.Chat SDK**    | A subset of relevant [SDK env vars][rcsdk-env]        |
-| `ROCKETCHAT_URL`*      | Local Rocketchat address (start before the bot)       |
-| `ROCKETCHAT_USER`*     | Name in the platform (bot user must be created first) |
-| `ROCKETCHAT_PASSWORD`* | Matching the credentials setup in Rocket.Chat         |
+| `ROCKETCHAT_URL`*      | URL of your Rocket.Chat instance, eg, https://open.rocket.chat       |
+| `ROCKETCHAT_USER`*     | Username of a bot user that has been pre-created in your Rocket.Chat instance |
+| `ROCKETCHAT_PASSWORD`* | Password for the user specified in ROCKETCHAT_USER       |
 | `ROCKETCHAT_ROOM`      | The default room/s for the bot to listen in to (csv)  |
 | `LISTEN_ON_ALL_PUBLIC` | Whether the bot should be listening everywhere        |
 | `RESPOND_TO_DM`        | If the bot can respond privately or only in the open  |
@@ -151,17 +150,12 @@ relevant to Hubot. It has some additional configs, [documented here][rcsdk-env].
 | `RESPOND_TO_LIVECHAT`  | If the bot should respond in livechat rooms           |
 | `INTEGRATION_ID`			 | Name to ID source of messages in code (e.g Hubot)     |
 
-`*` Required settings, unless running locally with testing defaults:
-- url: `localhost:3000`
-- username: `bot`
-- password: `pass`
-
 If you wish that your bot listen to all public rooms and all private rooms it
 is joined to set the env `LISTEN_ON_ALL_PUBLIC` to true. `ROCKETCHAT_ROOM` will
 be ignored.
 
 Be aware you *must* add the bot's user as a member of the new private group(s)
-before it will respond.
+before it will respond. If you attempt to start the bot with a room listed in the ROCKETCHAT_ROOM variable that it's not already a member of, the bot will error on startup. 
 
 ## Connecting to Rocket.Chat
 

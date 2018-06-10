@@ -1,0 +1,20 @@
+version: "2"
+services:
+  rocketbot:
+    image: rocketchat-hubot-2.0
+    environment:
+     - ROCKETCHAT_URL=https://open.rocket.chat
+     - ROCKETCHAT_USER=rocketbot
+     - ROCKETCHAT_PASSWORD=supersecret
+     - BOT_NAME=rocketbot
+     - ROCKETCHAT_ROOM=
+     - BOT_ALIAS=!
+     - LISTEN_ON_ALL_PUBLIC=false
+     - HUBOT_LOG_LEVEL=debug
+     - RESPOND_TO_DM=true
+     - RESPOND_TO_EDITED=false
+     - RESPOND_TO_LIVECHAT=false
+     - INTEGRATION_ID=rocketbot
+     - EXTERNAL_SCRIPTS=hubot-help,hubot-rocketchat-diagnostics
+    volumes:
+     - ./scripts:/home/hubot/scripts
