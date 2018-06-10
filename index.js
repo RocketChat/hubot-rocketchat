@@ -43,7 +43,7 @@ class RocketChatBotAdapter extends Adapter {
     settings.username = process.env.ROCKETCHAT_USER || 'bot';
     settings.password = process.env.ROCKETCHAT_PASS || 'bot';
     settings.useSsl = (process.env.ROCKETCHAT_USESSL === '') ? true : process.env.ROCKETCHAT_USESSL;  // server uses https ?
-    settings.rooms = (process.env.ROCKETCHAT_ROOM === '') ? ['general'] : [process.env.ROCKETCHAT_ROOM];
+    settings.rooms = (process.env.ROCKETCHAT_ROOM === '') ? ['GENERAL'] : [process.env.ROCKETCHAT_ROOM];
     this.settings = settings
 
     // Print logs with current configs
