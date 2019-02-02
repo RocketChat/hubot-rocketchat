@@ -321,7 +321,7 @@ hubot:
 $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 $ exit
 # su - hubot
-$ nvm install v4.8.5
+$ nvm install --lts
 $ npm update -g
 $ npm install -g yo generator-hubot
 $ mkdir hubot
