@@ -48,8 +48,8 @@ You can quickly spin up a docker image with:
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM='' \
-	-e LISTEN_ON_ALL_PUBLIC=true \
+	-e ROCKETCHAT_ROOM='general' \
+	-e RESPOND_TO_DM=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e ROCKETCHAT_AUTH=password \
@@ -64,8 +64,8 @@ If you want to include your own custom scripts you can by doing:
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM='' \
-	-e LISTEN_ON_ALL_PUBLIC=true \
+	-e ROCKETCHAT_ROOM='general' \
+	-e RESPOND_TO_DM=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e ROCKETCHAT_AUTH=password \
@@ -145,20 +145,17 @@ relevant to Hubot. It has some additional configs, [documented here][rcsdk-env].
 | `ROCKETCHAT_USER`*     | Name in the platform (bot user must be created first) |
 | `ROCKETCHAT_PASSWORD`* | Matching the credentials setup in Rocket.Chat         |
 | `ROCKETCHAT_ROOM`      | The default room/s for the bot to listen in to (csv)  |
-| `LISTEN_ON_ALL_PUBLIC` | Whether the bot should be listening everywhere        |
+| `LISTEN_ON_ALL_PUBLIC` | DEPRECATED - DO NOT USE                               |
 | `RESPOND_TO_DM`        | If the bot can respond privately or only in the open  |
 | `RESPOND_TO_EDITED`    | If the bot should reply / re-reply to edited messages |
 | `RESPOND_TO_LIVECHAT`  | If the bot should respond in livechat rooms           |
-| `INTEGRATION_ID`			 | Name to ID source of messages in code (e.g Hubot)     |
+| `INTEGRATION_ID        | Name to ID source of messages in code (e.g Hubot)     |
 
 `*` Required settings, unless running locally with testing defaults:
 - url: `localhost:3000`
 - username: `bot`
 - password: `pass`
 
-If you wish that your bot listen to all public rooms and all private rooms it
-is joined to set the env `LISTEN_ON_ALL_PUBLIC` to true. `ROCKETCHAT_ROOM` will
-be ignored.
 
 Be aware you *must* add the bot's user as a member of the new private group(s)
 before it will respond.
@@ -173,8 +170,8 @@ You can quickly spin up a docker image with:
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM='' \
-	-e LISTEN_ON_ALL_PUBLIC=true \
+	-e ROCKETCHAT_ROOM='general' \
+	-e RESPOND_TO_DM=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e HUBOT_NAME=bot \
@@ -188,8 +185,8 @@ If you want to include your own custom scripts you can by doing:
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM='' \
-	-e LISTEN_ON_ALL_PUBLIC=true \
+	-e ROCKETCHAT_ROOM='general' \
+	-e RESPOND_TO_DM=true \
 	-e ROCKETCHAT_USER=botname \
 	-e ROCKETCHAT_PASSWORD=botpass \
 	-e HUBOT_NAME=botname \
@@ -241,8 +238,8 @@ Now we start the docker container.
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM='' \
-	-e LISTEN_ON_ALL_PUBLIC=true \
+	-e ROCKETCHAT_ROOM='general' \
+	-e RESPOND_TO_DM=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e HUBOT_NAME=bot \
@@ -294,8 +291,8 @@ hubot:
   image: rocketchat/hubot-rocketchat:v0.1.4
   environment:
     - ROCKETCHAT_URL=your-rocket-chat-instance-ip:3000 (e.g. 192.168.2.240:3000)
-    - ROCKETCHAT_ROOM=
-    - LISTEN_ON_ALL_PUBLIC=true
+    - ROCKETCHAT_ROOM=general
+    - RESPOND_TO_DM=true
     - ROCKETCHAT_USER=username-of-your-bot
     - ROCKETCHAT_PASSWORD=yourpass
     - BOT_NAME=bot
@@ -374,8 +371,8 @@ Also be sure to remember the name you specify.  This is what the bot will respon
 You will need to tell the adapter where your install is and what login information to use.
 
 ```
-export ROCKETCHAT_ROOM=''
-export LISTEN_ON_ALL_PUBLIC=true
+export ROCKETCHAT_ROOM='general'
+export RESPOND_TO_DM=true
 export ROCKETCHAT_USER=bot
 export ROCKETCHAT_PASSWORD=bot
 export ROCKETCHAT_AUTH=password
@@ -395,8 +392,8 @@ You will need to tell the adapter where your install is and what login
 information to use.
 
 ```
-export ROCKETCHAT_ROOM=''
-export LISTEN_ON_ALL_PUBLIC=true
+export ROCKETCHAT_ROOM='general'
+export RESPOND_TO_DM=true
 export ROCKETCHAT_USER=rocketbot
 export ROCKETCHAT_PASSWORD=bot
 export ROCKETCHAT_AUTH=ldap
@@ -443,8 +440,8 @@ Now we start the docker container.
 
 ```
 docker run -it -e ROCKETCHAT_URL=<your rocketchat instance>:<port> \
-	-e ROCKETCHAT_ROOM='' \
-	-e LISTEN_ON_ALL_PUBLIC=true \
+	-e ROCKETCHAT_ROOM='general' \
+	-e RESPOND_TO_DM=true \
 	-e ROCKETCHAT_USER=bot \
 	-e ROCKETCHAT_PASSWORD=bot \
 	-e ROCKETCHAT_AUTH=password \
