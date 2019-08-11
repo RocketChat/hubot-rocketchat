@@ -81,7 +81,7 @@ An admin user is required to create the account for the bot to login to.
 
 1. From **Administration** > **Users** menu
 2. Select `+` to make a new user
-3. Enter *Name*, *Username*, *Email* (tick verified) and *Passwword*
+3. Enter *Name*, *Username*, *Email* (tick verified) and *Password*
 4. Disable *Require password change*
 5. Select `bot` from role selection and click *Add Role*
 6. Disable *Join default channels* recommended, to avoid accidental listening
