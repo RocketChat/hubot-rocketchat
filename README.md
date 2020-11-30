@@ -138,7 +138,7 @@ relevant to Hubot. It has some additional configs, [documented here][rcsdk-env].
 | `HUBOT_ADAPTER`        | Set to `rocketchat` (or pass as launch argument)      |
 | `HUBOT_NAME`           | The programmatic name for listeners                   |
 | `HUBOT_ALIAS`          | An alternate name for the bot to respond to           |
-| `HUBOT_LOG_LEVEL`      | The minimum level of logs to output                   |
+| `HUBOT_LOG_LEVEL`      | The minimum level of logs to output (error)                   |
 | `HUBOT_HTTPD`          | If the bot needs to listen to or make HTTP requests   |
 | **Rocket.Chat SDK**    | A subset of relevant [SDK env vars][rcsdk-env]        |
 | `ROCKETCHAT_URL`*      | Local Rocketchat address (start before the bot)       |
