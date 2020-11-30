@@ -1,9 +1,8 @@
-FROM node:4.8.3
+FROM node:10.15.3
 MAINTAINER Rocket.Chat Team <buildmaster@rocket.chat>
 
 RUN npm install -g coffee-script yo generator-hubot  &&  \
 	useradd hubot -m
-
 USER hubot
 
 WORKDIR /home/hubot
@@ -20,17 +19,16 @@ RUN yo hubot --owner="$BOT_OWNER" --name="$BOT_NAME" --description="$BOT_DESC" -
 	sed -i /redis-brain/d ./external-scripts.json && \
 	npm install hubot-scripts
 
-ADD . /home/hubot/node_modules/hubot-rocketchat
+ADD . /home/hubot/hubot-rocketchat
 
 # hack added to get around owner issue: https://github.com/docker/docker/issues/6119
 USER root
-RUN chown hubot:hubot -R /home/hubot/node_modules/hubot-rocketchat
+RUN chown hubot:hubot -R /home/hubot/hubot-rocketchat
 USER hubot
 
-RUN cd /home/hubot/node_modules/hubot-rocketchat && \
-	npm install && \
-	#coffee -c /home/hubot/node_modules/hubot-rocketchat/src/*.coffee && \
-	cd /home/hubot
+RUN npm install ./hubot-rocketchat \
+		#coffee -c /home/hubot/node_modules/hubot-rocketchat/src/*.coffee &&
+		&& cd /home/hubot
 
 CMD node -e "console.log(JSON.stringify('$EXTERNAL_SCRIPTS'.split(',')))" > external-scripts.json && \
 	npm install $(node -e "console.log('$EXTERNAL_SCRIPTS'.split(',').join(' '))") && \
