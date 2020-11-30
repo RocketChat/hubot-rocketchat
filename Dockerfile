@@ -11,6 +11,7 @@ WORKDIR /home/hubot
 ENV BOT_NAME "rocketbot"
 ENV BOT_OWNER "No owner specified"
 ENV BOT_DESC "Hubot with rocketbot adapter"
+ENV HUBOT_LOG_LEVEL "error"
 
 ENV EXTERNAL_SCRIPTS=hubot-diagnostics,hubot-help,hubot-google-images,hubot-google-translate,hubot-pugme,hubot-maps,hubot-rules,hubot-shipit
 
