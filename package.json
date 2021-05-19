@@ -45,7 +45,7 @@
   },
   "main": "index.js",
   "dependencies": {
-    "@rocket.chat/sdk": "^0.2.1",
+    "@rocket.chat/sdk": "git+https://github.com/N0vachr0n0/Rocket.Chat.js.SDK.git",
     "hubot": "3"
   },
   "peerDependencies": {
