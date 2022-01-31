@@ -1,4 +1,4 @@
-FROM node:4.8.3
+FROM node:lts-stretch
 MAINTAINER Rocket.Chat Team <buildmaster@rocket.chat>
 
 RUN npm install -g coffee-script yo generator-hubot  &&  \
@@ -18,9 +18,8 @@ ENV EXTERNAL_SCRIPTS=hubot-diagnostics,hubot-help,hubot-google-images,hubot-goog
 RUN yo hubot --owner="$BOT_OWNER" --name="$BOT_NAME" --description="$BOT_DESC" --defaults && \
 	sed -i /heroku/d ./external-scripts.json && \
 	sed -i /redis-brain/d ./external-scripts.json && \
-	npm install hubot-scripts
-
-ADD . /home/hubot/node_modules/hubot-rocketchat
+	npm install hubot-scripts && \
+	npm install hubot-rocketchat
 
 # hack added to get around owner issue: https://github.com/docker/docker/issues/6119
 USER root
