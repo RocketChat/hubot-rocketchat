@@ -25,7 +25,7 @@ class AttachmentMessage extends TextMessage {
     this.id = id
   }
   toString () {
-    return this.attachment
+    return this.text
   }
 }
 
