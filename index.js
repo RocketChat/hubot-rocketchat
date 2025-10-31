@@ -1,9 +1,6 @@
-'use strict'
+import { Adapter, Response, TextMessage, EnterMessage, LeaveMessage } from 'hubot'
 
-const Adapter = require.main.require('hubot/src/adapter')
-const Response = require.main.require('hubot/src/response')
-const { TextMessage, EnterMessage, LeaveMessage } = require.main.require('hubot/src/message')
-const { driver, api, methodCache, settings } = require('@rocket.chat/sdk')
+import { driver, api, methodCache, settings } from '@rocket.chat/sdk'
 
 /** Extend default response with custom adapter methods */
 class RocketChatResponse extends Response {
@@ -183,4 +180,8 @@ class RocketChatBotAdapter extends Adapter {
   }
 }
 
-exports.use = (robot) => new RocketChatBotAdapter(robot)
+export default {
+    async use (robot) {
+        return new RocketChatBotAdapter(robot)
+    }
+}

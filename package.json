@@ -1,62 +1,63 @@
 {
-  "name": "hubot-rocketchat",
-  "version": "2.0.0-development",
-  "files": [
-    "index.js"
-  ],
-  "author": {
-    "name": "Rocket.Chat",
-    "url": "https://rocket.chat/"
-  },
-  "contributors": [
-    {
-      "name": "Sing Li",
-      "email": "sing.li@rocket.chat"
+    "name": "hubot-rocketchat",
+    "version": "2.1.0-development",
+    "type": "module",
+    "files": [
+      "index.js"
+    ],
+    "author": {
+      "name": "Rocket.Chat",
+      "url": "https://rocket.chat/"
     },
-    {
-      "name": "Gabriel Engel",
-      "email": "gabriel.engel@rocket.chat"
+    "contributors": [
+      {
+        "name": "Sing Li",
+        "email": "sing.li@rocket.chat"
+      },
+      {
+        "name": "Gabriel Engel",
+        "email": "gabriel.engel@rocket.chat"
+      },
+      {
+        "name": "Aaron Ogle",
+        "email": "aaron.ogle@rocket.chat"
+      },
+      {
+        "name": "Tim Kinnane",
+        "email": "tim.kinnane@rocket.chat"
+      }
+    ],
+    "description": "Hubot Rocket.Chat Adapter",
+    "keywords": [
+      "hubot",
+      "adapter",
+      "rocketchat",
+      "rocket",
+      "chat"
+    ],
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/RocketChat/hubot-rocketchat.git"
     },
-    {
-      "name": "Aaron Ogle",
-      "email": "aaron.ogle@rocket.chat"
+    "bugs": {
+      "url": "https://github.com/RocketChat/hubot-rocketchat/issues",
+      "email": "support@rocket.chat"
     },
-    {
-      "name": "Tim Kinnane",
-      "email": "tim.kinnane@rocket.chat"
+    "main": "index.js",
+    "dependencies": {
+      "@rocket.chat/sdk": "^0.2.9-2",
+      "hubot": "11"
+    },
+    "peerDependencies": {
+      "hubot": "11"
+    },
+    "devDependencies": {
+      "base64-url": "^2.0.0",
+      "debug": "^2.6.9",
+      "fresh": "^0.5.2",
+      "mime": "^1.4.1",
+      "morgan": "^1.9.1",
+      "negotiator": "^0.6.1"
     }
-  ],
-  "description": "Hubot Rocket.Chat Adapter",
-  "keywords": [
-    "hubot",
-    "adapter",
-    "rocketchat",
-    "rocket",
-    "chat"
-  ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/RocketChat/hubot-rocketchat.git"
-  },
-  "bugs": {
-    "url": "https://github.com/RocketChat/hubot-rocketchat/issues",
-    "email": "support@rocket.chat"
-  },
-  "main": "index.js",
-  "dependencies": {
-    "@rocket.chat/sdk": "^0.2.1",
-    "hubot": "3"
-  },
-  "peerDependencies": {
-    "hubot": "3"
-  },
-  "devDependencies": {
-    "base64-url": "^2.0.0",
-    "debug": "^2.6.9",
-    "fresh": "^0.5.2",
-    "mime": "^1.4.1",
-    "morgan": "^1.9.1",
-    "negotiator": "^0.6.1"
   }
-}
