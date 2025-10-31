@@ -20,12 +20,7 @@ RUN yo hubot --owner="$BOT_OWNER" --name="$BOT_NAME" --description="$BOT_DESC" -
 	sed -i /redis-brain/d ./external-scripts.json && \
 	npm install hubot-scripts
 
-ADD . /home/hubot/node_modules/hubot-rocketchat
-
-# hack added to get around owner issue: https://github.com/docker/docker/issues/6119
-USER root
-RUN chown hubot:hubot -R /home/hubot/node_modules/hubot-rocketchat
-USER hubot
+COPY --chown=hubot:hubot . /home/hubot/node_modules/hubot-rocketchat
 
 RUN cd /home/hubot/node_modules/hubot-rocketchat && \
 	npm install && \
