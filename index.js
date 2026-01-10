@@ -142,7 +142,7 @@ class RocketChatBotAdapter extends Adapter {
   send (envelope, ...strings) {
     return strings.map((text) => {
       if (envelope.user && envelope.user.roomID) driver.sendToRoomId(text, envelope.user.roomID)
-      else driver.sendToRoom(text, envelope.room)
+      else driver.sendToRoom(text, envelope.user.room)
     })
   }
 
@@ -166,7 +166,7 @@ class RocketChatBotAdapter extends Adapter {
 
   /** Reply to a user's message (mention them if not a DM) */
   reply (envelope, ...strings) {
-    if (envelope.room.indexOf(envelope.user.id) === -1) {
+    if (envelope.user.room.indexOf(envelope.user.id) === -1) {
       strings = strings.map((s) => `@${envelope.user.name} ${s}`)
     }
     return this.send(envelope, ...strings)
